@@ -19,7 +19,7 @@
 </style>
 <br />
 <div class="row">
-    <a href="./training-aanvragen" style="color:black">
+    <a href="/training-aanvragen" style="color:black">
         <div class="col-lg-3">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -38,7 +38,7 @@
             </div>
         </div>
     </a>
-    <a href="./vacatures" style="color:black">
+    <a href="/vacatures" style="color:black">
         <div class="col-lg-3">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -57,7 +57,7 @@
             </div>
         </div>
     </a>
-    <a href="./cijfers" style="color:black">
+    <a href="/cijfers" style="color:black">
         <div class="col-lg-3">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -76,7 +76,7 @@
             </div>
         </div>
     </a>
-    <a href="./mailbox" style="color:black">
+    <a href="/mailbox" style="color:black">
         <div class="col-lg-3">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -96,7 +96,7 @@
         </div>
     </a>
 
-    <a href="./contact/bestuur" style="color:black">
+    <a href="/contact/bestuur" style="color:black">
         <div class="col-lg-4">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -115,7 +115,7 @@
             </div>
         </div>
     </a>
-    <a href="./leermiddelen" style="color:black">
+    <a href="/leermiddelen" style="color:black">
         <div class="col-lg-4">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">
@@ -134,7 +134,7 @@
             </div>
         </div>
     </a>
-    <a href="./contact/eenheid" style="color:black">
+    <a href="/contact/eenheid" style="color:black">
         <div class="col-lg-4">
             <div class="ibox float-e-margins example222">
                 <div class="ibox-title example333">

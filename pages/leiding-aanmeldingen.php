@@ -41,7 +41,7 @@ if ($leiding != 1) {
 		<div class="col-lg-12">
 			<div class="ibox float-e-margins example222" style="background:white">
 				<div class="ibox-title example333">
-					<h3 style="text-align:center;">Aanmeldingen <?= $configuratieFetch['serverNaam'] ?></h3>
+					<h3 style="text-align:center;">Aanmeldingen District-Rijnmond</h3>
 				</div>
 				<hr style="height:2px;border-width:0;color:gray;background-color:gray">
 				<h3 style="text-align:center;">Nieuwe aanmeldingen</h3>

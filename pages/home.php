@@ -66,7 +66,7 @@ if ($userFetch['opgesprek'] == '1') {
 </div>
 <?php if ($instructeur == 1) { ?>
     <div class="row">
-        <a href="/instructeur/aanvraag-training" style="color:black">
+        <a href="<?php echo $site; ?>/instructeur/aanvraag-training" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">
@@ -80,7 +80,7 @@ if ($userFetch['opgesprek'] == '1') {
                 </div>
             </div>
         </a>
-        <a href="/instructeur/contact" style="color:black">
+        <a href="<?php echo $site; ?>/instructeur/contact" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">
@@ -94,7 +94,7 @@ if ($userFetch['opgesprek'] == '1') {
                 </div>
             </div>
         </a>
-        <a href="/instructeur/cijfer" style="color:black">
+        <a href="<?php echo $site; ?>/instructeur/cijfer" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">
@@ -112,7 +112,7 @@ if ($userFetch['opgesprek'] == '1') {
 <?php } ?>
 <?php if ($leiding == 1) { ?>
     <div class="row">
-        <a href="/leiding/aanmeldingen" style="color:black">
+        <a href="<?php echo $site; ?>/leiding/aanmeldingen" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">
@@ -126,7 +126,7 @@ if ($userFetch['opgesprek'] == '1') {
                 </div>
             </div>
         </a>
-        <a href="/leiding/contact" style="color:black">
+        <a href="<?php echo $site; ?>/leiding/contact" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">
@@ -140,7 +140,7 @@ if ($userFetch['opgesprek'] == '1') {
                 </div>
             </div>
         </a>
-        <a href="/leiding/vacature" style="color:black">
+        <a href="<?php echo $site; ?>/leiding/vacature" style="color:black">
             <div class="col-lg-4">
                 <div class="ibox float-e-margins example222">
                     <div class="ibox-title example333">

@@ -235,8 +235,7 @@ if ($leiding != 1) {
                     </script>
                     <?php
                 } else {
-                    $query = $db->query("INSERT INTO users (`id`, `username`, `password`, `salt`, `email`, `eenheid`, `naam`, `achternaam`, `leeftijd`, `geboortedatum`, `telefoon`, `andereclan` ) VALUES (
-                                  '" . $id . "',
+                    $query = $db->query("INSERT INTO users (`username`, `password`, `salt`, `email`, `eenheid`, `naam`, `achternaam`, `leeftijd`, `geboortedatum`, `telefoon`, `andereclan` ) VALUES (
                                   '" . $username . "',
                                   '" . $password . "',
 								  '" . $salt . "',

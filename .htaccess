@@ -9,6 +9,7 @@ RewriteRule ^agenda/bekijk/(.*)$ index.php?p=agenda-informatie&id=$1 [L]
 RewriteRule ^overzicht/(.*)$ index.php?p=overzicht&id=$1 [L]
 RewriteRule ^leermiddelen/(.*)$ index.php?p=leermiddelen&id=$1 [L]
 RewriteRule ^afwezigheid/(.*)$ index.php?p=afwezigheid&id=$1 [L]
+RewriteRule ^licentie index.php?p=licentie [L]
 
 RewriteRule ^mailbox/view/(.*)$ index.php?p=mailbox-view&id=$1 [L]
 RewriteRule ^mailbox/bericht-maken index.php?p=mailbox-maak [L]

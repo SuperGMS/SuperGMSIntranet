@@ -1,3 +1,3 @@
-    function refresh_page (){
-        location.reload();
+    function refresh_page (){
+        location.reload();
     }

@@ -26,11 +26,13 @@ if ($userFetch['opgesprek'] == '1') {
     <!-- for ios 7 style, multi-resolution icon of 152x152 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-barstyle" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn.discordapp.com/attachments/1010341507632468029/1013178395229696100/lms_logo_rgb_246h2.png">
+    <link rel="apple-touch-icon"
+        href="https://cdn.discordapp.com/attachments/1010341507632468029/1013178395229696100/lms_logo_rgb_246h2.png">
     <meta name="apple-mobile-web-app-title" content="Flatkit">
     <!-- for Chrome on Android, multi-resolution icon of 196x196 -->
     <meta name="mobile-web-app-capable" content="yes">
-    <link rel="shortcut icon" sizes="196x196" href="https://cdn.discordapp.com/attachments/1010341507632468029/1013178395229696100/lms_logo_rgb_246h2.png">
+    <link rel="shortcut icon" sizes="196x196"
+        href="https://cdn.discordapp.com/attachments/1010341507632468029/1013178395229696100/lms_logo_rgb_246h2.png">
 
     <!-- style -->
     <link rel="stylesheet" href="<?= $site ?>/css/animate.css/animate.min.css" type="text/css" />
@@ -41,6 +43,9 @@ if ($userFetch['opgesprek'] == '1') {
     <link rel="stylesheet" href="<?= $site ?>/css/ionicons/css/ionicons.min.css" type="text/css" />
     <link rel="stylesheet" href="<?= $site ?>/css/simple-line-icons/css/simple-line-icons.css" type="text/css" />
     <link rel="stylesheet" href="<?= $site ?>/css/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
     <!-- build:css css/styles/app.min.css -->
     <link rel="stylesheet" href="<?= $site ?>/css/styles/app.css" type="text/css" />
@@ -64,8 +69,8 @@ if ($userFetch['opgesprek'] == '1') {
     <script src="<?= $site ?>/libs/jscroll/jquery.jscroll.min.js"></script>
 
     <script>
-        jQuery(document).ready(function($) {
-            $(".clickable-row").click(function() {
+        jQuery(document).ready(function ($) {
+            $(".clickable-row").click(function () {
                 window.location = $(this).data("href");
             });
         });
@@ -108,8 +113,8 @@ if ($userFetch['opgesprek'] == '1') {
                                 <span class="text-xs">Main</span>
                             </li>
                             <li <?php if ($_GET['p'] == 'home') {
-                                    echo 'class="active"';
-                                } ?>>
+                                echo 'class="active"';
+                            } ?>>
                                 <a href="<?= $site ?>/home" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-house"></i>
@@ -118,9 +123,9 @@ if ($userFetch['opgesprek'] == '1') {
                                 </a>
                             </li>
                             <li <?php if ($_GET['p'] == 'agenda') {
-                                    echo 'class="active"';
-                                } ?>>
-                                <a href="<?= $site ?>/agenda" class="b-success">
+                                echo 'class="active"';
+                            } ?>>
+                                <a href="<?= $site ?>/agenda.php" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-calendar-days"></i>
                                     </span>
@@ -128,8 +133,8 @@ if ($userFetch['opgesprek'] == '1') {
                                 </a>
                             </li>
                             <li <?php if ($_GET['p'] == 'afwezigheid') {
-                                    echo 'class="active"';
-                                } ?>>
+                                echo 'class="active"';
+                            } ?>>
                                 <a href="<?= $site ?>/afwezigheid" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-circle-check"></i>
@@ -137,10 +142,10 @@ if ($userFetch['opgesprek'] == '1') {
                                     <span class="nav-text">Afwezigheid</span>
                                 </a>
                             </li>
-                            <li <?php if ($_GET['p'] == 'mailbox') {
-                                    echo 'class="active"';
-                                } ?>>
-                                <a class="b-danger">
+                            <li <?php if ($_GET['p'] == 'aanvragen') {
+                                echo 'class="active"';
+                            } ?>>
+                                <a href="<?= $site ?>/aanvragen" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-clipboard"></i>
                                     </span>
@@ -148,8 +153,8 @@ if ($userFetch['opgesprek'] == '1') {
                                 </a>
                             </li>
                             <li <?php if ($_GET['p'] == 'vacatures') {
-                                    echo 'class="active"';
-                                } ?>>
+                                echo 'class="active"';
+                            } ?>>
                                 <a href="<?= $site ?>/vacatures" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-handshake"></i>
@@ -158,8 +163,8 @@ if ($userFetch['opgesprek'] == '1') {
                                 </a>
                             </li>
                             <li <?php if ($_GET['p'] == 'cijfers') {
-                                    echo 'class="active"';
-                                } ?>>
+                                echo 'class="active"';
+                            } ?>>
                                 <a href="<?= $site ?>/cijfers" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-graduation-cap"></i>
@@ -168,8 +173,8 @@ if ($userFetch['opgesprek'] == '1') {
                                 </a>
                             </li>
                             <li <?php if ($_GET['p'] == 'leermiddelen') {
-                                    echo 'class="active"';
-                                } ?>>
+                                echo 'class="active"';
+                            } ?>>
                                 <a href="<?= $site ?>/leermiddelen" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-swatchbook"></i>
@@ -177,10 +182,11 @@ if ($userFetch['opgesprek'] == '1') {
                                     <span class="nav-text">Leermiddelen</span>
                                 </a>
                             </li>
-                            <li <?php if ($_GET['p'] == 'mailbox') {
+
+                            <li <?php if ($_GET['p'] == 'mailbox' || $_GET['p'] == 'mailbox-prullenbak' || $_GET['p'] == 'mailbox-verzonden') {
                                     echo 'class="active"';
                                 } ?>>
-                                <a class="b-danger">
+                                <a href="<?= $site ?>/mailbox" class="b-success">
                                     <span class="nav-icon text-white no-fade">
                                         <i class="fa-solid fa-envelope"></i>
                                     </span>
@@ -193,8 +199,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     <span class="text-xs">Instructeur</span>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'instructor/send-mail') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a class="b-danger">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-envelope"></i>
@@ -203,8 +209,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'instructeur/aanvragen') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?= $site ?>/instructeur/aanvragen" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-clipboard"></i>
@@ -219,8 +225,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     <span class="text-xs">Teamleider</span>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'agenda') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/agenda" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-calendar-days"></i>
@@ -229,8 +235,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'leermiddelen') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/leermiddelen" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-swatchbook"></i>
@@ -239,8 +245,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'leden') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/leden" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-people-group"></i>
@@ -249,8 +255,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'instructor/send-mail') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a class="b-danger">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-envelope"></i>
@@ -259,8 +265,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'aanvragen') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/aanvragen" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-clipboard"></i>
@@ -269,8 +275,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'aanmeldingen') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/aanmeldingen" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-clipboard"></i>
@@ -279,8 +285,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'vacature') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/vacature" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-handshake"></i>
@@ -289,8 +295,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'tijdlijn') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/teamleider/tijdlijn" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-timeline"></i>
@@ -305,8 +311,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     <span class="text-xs">Bestuur</span>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'agenda') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/agenda" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-calendar-days"></i>
@@ -315,8 +321,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'leden') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/leden" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-people-group"></i>
@@ -325,8 +331,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'leden') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/geef-rank" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-brands fa-critical-role"></i>
@@ -335,8 +341,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'formulieren') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/formulieren" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-brands fa-wpforms"></i>
@@ -345,8 +351,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'leiding/send-mail') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a class="b-danger">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-envelope"></i>
@@ -355,8 +361,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'tijdlijn') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/tijdlijn" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-timeline"></i>
@@ -365,8 +371,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'aanmeldingen') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/aanmeldingen" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-user-tie fa-beat"></i>
@@ -375,8 +381,8 @@ if ($userFetch['opgesprek'] == '1') {
                                     </a>
                                 </li>
                                 <li <?php if ($_GET['p'] == 'vacature') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/vacature" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-handshake"></i>
@@ -384,14 +390,34 @@ if ($userFetch['opgesprek'] == '1') {
                                         <span class="nav-text">Vacature beheer</span>
                                     </a>
                                 </li>
+                                <li <?php if ($_GET['p'] == 'configuratie') {
+                                    echo 'class="active"';
+                                } ?>>
+                                    <a href="<?php echo $site; ?>/leiding/configuratie" class="b-success">
+                                        <span class="nav-icon text-white no-fade">
+                                            <i class="fa-solid fa-gear"></i>
+                                        </span>
+                                        <span class="nav-text">Configuratie</span>
+                                    </a>
+                                </li>
                                 <li <?php if ($_GET['p'] == 'afwezigheid') {
-                                        echo 'class="active"';
-                                    } ?>>
+                                    echo 'class="active"';
+                                } ?>>
                                     <a href="<?php echo $site; ?>/leiding/afwezigheid" class="b-success">
                                         <span class="nav-icon text-white no-fade">
                                             <i class="fa-solid fa-handshake"></i>
                                         </span>
                                         <span class="nav-text">Absentie beheer</span>
+                                    </a>
+                                </li>
+                                <li <?php if ($_GET['p'] == 'addons') {
+                                    echo 'class="active"';
+                                } ?>>
+                                    <a href="<?php echo $site; ?>/leiding/addons" class="b-success">
+                                        <span class="nav-icon text-white no-fade">
+                                            <i class="fa-solid fa-gear"></i>
+                                        </span>
+                                        <span class="nav-text">Add-ons</span>
                                     </a>
                                 </li>
                             <?php } ?>
@@ -405,12 +431,17 @@ if ($userFetch['opgesprek'] == '1') {
                                 <img src="<?php echo $userFetch['avatar'] ?>" alt="..." class="w-40 img-circle">
                             </div>
                             <div class="clear p-x">
-                                <span class="block _500 text-muted"><?php echo $userFetch['username'] ?></span>
-                                <span class="block _500 text-muted"><?php echo $userFetch['eenheid'] ?></span>
+                                <span class="block _500 text-muted">
+                                    <?php echo $userFetch['username'] ?>
+                                </span>
+                                <span class="block _500 text-muted">
+                                    <?php echo $userFetch['eenheid'] ?>
+                                </span>
                             </div>
                         </a>
                         <div class="dropdown-menu w dropdown-menu-scale ">
-                            <a class="dropdown-item" href="<?php echo $site; ?>/profiel?id=<?php echo $userFetch["id"]; ?>">
+                            <a class="dropdown-item"
+                                href="<?php echo $site; ?>/profiel?id=<?php echo $userFetch["id"]; ?>">
                                 <span>Profiel</span>
                             </a>
                             <a class="dropdown-item" href="<?php echo $site; ?>/instellingen">
@@ -442,7 +473,13 @@ if ($userFetch['opgesprek'] == '1') {
                     <!-- nabar right -->
                     <ul class="nav navbar-nav pull-right">
                         <li class="nav-item dropdown pos-stc-xs" style="line-height:3.5rem;top:-2px;">
-                            <button class="btn btn-fw warn" onclick="location.href='https://supergms.nl/gms/' + '<?php echo $link; ?>';">Geïntergreerd meldkamer systeem</button>
+                            <button class="btn btn-fw warn"
+                                onclick="location.href='https://mijnbeta.district-rijnmond.net';" style="background:red">Beta systeem <strong>mijn district</strong></button>
+                        </li>
+                        <li class="nav-item dropdown pos-stc-xs" style="line-height:3.5rem;top:-2px;">
+                            <button class="btn btn-fw warn"
+                                onclick="location.href='https://supergms.nl/gms/districtrijnmond';">Geïntergreerd
+                                meldkamer systeem</button>
                         </li>
                         <li class="nav-item dropdown pos-stc-xs">
                             <a class="nav-link clear" data-toggle="dropdown">
@@ -468,7 +505,7 @@ if ($userFetch['opgesprek'] == '1') {
                                         while ($fetchMail = $getMail->fetch_array()) {
                                             $getUserinfo = $db->query("SELECT id, username, avatar FROM users WHERE id = '" . $fetchMail['uid_from'] . "'");
                                             $getUser = $getUserinfo->fetch_assoc();
-                                        ?>
+                                            ?>
                                             <a href="<?php echo $site; ?>/mailbox/view/<?php echo $fetchMail['id']; ?>">
                                                 <li class="list-group-item dark-white box-shadow-z0 b">
                                                     <span class="pull-left m-r">
@@ -514,13 +551,16 @@ if ($userFetch['opgesprek'] == '1') {
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link clear" data-toggle="dropdown">
-                                <span><?= $userFetch['username'] ?></span>
+                                <span>
+                                    <?= $userFetch['username'] ?>
+                                </span>
                                 <span class="avatar w-32">
                                     <img src="<?= $userFetch['avatar'] ?>" class="w-full rounded" alt="...">
                                 </span>
                             </a>
                             <div class="dropdown-menu w dropdown-menu-scale pull-right">
-                                <a class="dropdown-item" href="<?php echo $site; ?>/profiel?id=<?php echo $userFetch["id"]; ?>">
+                                <a class="dropdown-item"
+                                    href="<?php echo $site; ?>/profiel?id=<?php echo $userFetch["id"]; ?>">
                                     <span>Profiel</span>
                                 </a>
                                 <a class="dropdown-item" href="<?php echo $site; ?>/instellingen">
@@ -543,10 +583,12 @@ if ($userFetch['opgesprek'] == '1') {
             <div class="app-footer white bg p-a b-t">
                 <div class="pull-right text-sm text-muted">
                     <span style="color:#ffffcc;">
-                        [BETA V2.0]
+                        [BETA V2.1]
                     </span>
                 </div>
-                <span class="text-sm text-muted">&copy; SuperGMS.nl <?= date("Y"); ?></span>
+                <span class="text-sm text-muted">&copy; SuperGMS.nl
+                    <?= date("Y"); ?>
+                </span>
             </div>
             <div class="app-body">
 

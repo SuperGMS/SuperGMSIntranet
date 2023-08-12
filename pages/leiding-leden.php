@@ -26,50 +26,15 @@ if ($leiding != 1) {
     echo 'Geen toegang!';
 } else {
 ?>
-    <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-lg-10">
-            <h2>Leden</h2>
-            <ol class="breadcrumb">
-                <li>
-                    <a href="index.html">Home</a>
-                </li>
-                <li>
-                    <a>Leiding</a>
-                </li>
-                <li class="active">
-                    <strong>Leden</strong>
-                </li>
-            </ol>
-        </div>
-        <div class="col-lg-2">
 
-        </div>
-    </div>
-    <br />
-    <style>
-        input[type=submit] {
-            border: 0;
-            display: block;
-            height: 30px;
-            width: 100px;
-        }
+    <div class="padding">
+        <div class="box" style="border-radius:10px 10px;">
+            <div class="box-header">
+                <h2 style="display:inline;">Leden beheren</h2>
+                <button style="float:right;display:inline;margin-bottom:21px;" class="btn btn-fw warn" onclick="location.href='https://supergms.nl/intranet/' + '<?php echo $link; ?>' + '/leiding/nieuw/lid';">Lid aanmaken.</button>
+            </div>
+            <div class="table-responsive" id="datatable" style="border-radius:0px 0px 10px 10px;">
 
-        .example222 {
-            border: 3px solid white;
-            border-radius: 5px 5px;
-        }
-
-        .example333 {
-            border: 3px solid white;
-        }
-    </style>
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins example222" style="background:white">
-                <div class="ibox-title example333">
-                    <h3 style="text-align:center;">Leden beheer</h3>
-                </div>
-                <br />
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
@@ -88,19 +53,22 @@ if ($leiding != 1) {
                         <?php
                         $getLeden = $db->query("SELECT * FROM users ORDER BY eenheid");
                         $countLeden = $getLeden->num_rows;
-                        if ($countLeden == 0) {
-                            echo '<br /><b>Geen leden onder jou beheer</b>';
-                        }
+
                         while ($fetchLeden = $getLeden->fetch_array()) {
                         ?>
-                            <tr>
+                            <script>
+                                jQuery(document).ready(function($) {
+                                    $(".clickable-row").click(function() {
+                                        window.location = $(this).data("href");
+                                    });
+                                });
+                            </script>
+                            <tr class="clickable-row" data-href="<?php echo $site; ?>/leiding/lid/<?php echo $fetchLeden['id']; ?>">
                                 <td class="client-avatar">
                                     <img alt="image" style="height:25px;" src="<?php echo $fetchLeden['avatar']; ?>">
                                 </td>
                                 <td>
-                                    <a href="<?php echo $site; ?>/leiding/lid/<?php echo $fetchLeden['id']; ?>" class="client-link">
-                                        <?php echo $fetchLeden['username']; ?>
-                                    </a>
+                                    <?php echo $fetchLeden['username']; ?>
                                 </td>
                                 <td>
                                     <?php echo $fetchLeden['eenheid']; ?>
@@ -162,7 +130,13 @@ if ($leiding != 1) {
                         <?php } ?>
                     </tbody>
                 </table>
+                <?php
+                if ($countLeden <= 0) { ?>
+                    <h3 style="text-align:center">Geen leden onder jou beheer!</h3>
+                    <br />
+                <?php } ?>
             </div>
         </div>
     </div>
+
 <?php } ?>

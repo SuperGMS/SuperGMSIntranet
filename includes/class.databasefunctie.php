@@ -3,7 +3,7 @@ session_start();
 $mysqli = new mysqli(
 	'localhost',
 	'admin_SuperGMSWHMCS',
-	'Damian123123!',
+	'GtyWiVjsM9di4PWi2mtw21s6X5TuF54YoFa7iFoDXONodqAHTl',
 	'admin_SuperGMSWHMCS'
 );
 if ($mysqli->connect_error) {

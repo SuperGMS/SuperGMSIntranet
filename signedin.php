@@ -478,7 +478,7 @@ if ($userFetch['opgesprek'] == '1') {
                         </li>
                         <li class="nav-item dropdown pos-stc-xs" style="line-height:3.5rem;top:-2px;">
                             <button class="btn btn-fw warn"
-                                onclick="location.href='https://supergms.nl/gms/<?= $configuratieFetch['link']?>';">Geïntergreerd
+                                onclick="location.href='https://supergms.nl/gms/<?= $configuratieFetch['Link']?>';">Geïntergreerd
                                 meldkamer systeem</button>
                         </li>
                         <li class="nav-item dropdown pos-stc-xs">

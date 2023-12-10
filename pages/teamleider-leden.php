@@ -49,7 +49,6 @@ $countAantalNietPorto = $getAantalNietPorto->num_rows;
 if ($teamleider != 1) {
 
     echo 'Geen toegang!';
-
 } else {
 
 
@@ -57,11 +56,9 @@ if ($teamleider != 1) {
     if ($Politie == 1) {
 
         $Politie = 'Politie';
-
     } else {
 
         $Politie = '0';
-
     }
 
 
@@ -69,11 +66,9 @@ if ($teamleider != 1) {
     if ($Handhaving == 1) {
 
         $Handhaving = 'Handhaving';
-
     } else {
 
         $Handhaving = '0';
-
     }
 
 
@@ -81,11 +76,9 @@ if ($teamleider != 1) {
     if ($Brandweer == 1) {
 
         $Brandweer = 'Brandweer';
-
     } else {
 
         $Brandweer = '0';
-
     }
 
 
@@ -93,11 +86,9 @@ if ($teamleider != 1) {
     if ($ambu == 1) {
 
         $Ambulance = 'Ambulance';
-
     } else {
 
         $Ambulance = '0';
-
     }
 
 
@@ -105,11 +96,9 @@ if ($teamleider != 1) {
     if ($kmar == 1) {
 
         $kmar = 'Koninklijke Marechaussee';
-
     } else {
 
         $kmar = '0';
-
     }
 
 
@@ -117,233 +106,219 @@ if ($teamleider != 1) {
     if ($mk == 1) {
 
         $Meldkamer = 'Meldkamer';
-
     } else {
 
         $Meldkamer = '0';
-
     }
 
 ?>
 
-    <div class="padding">
 
-        <div class="box" style="border-radius:10px 10px;">
+    <!--Nieuwe Code -->
 
-            <div class="box-header">
+    <h1>Ledenbeheer</h1>
 
-                <h2>Leden beheren</h2>
+<?= $informatienognietafgemaakt ?>
 
-            </div>
+    <!-- Nieuwe code -->
 
-            <div class="table-responsive" id="datatable" style="border-radius:0px 0px 10px 10px;">
+    <div class="recent-orders">
+
+        <h2>Bekijk hier al je leden van je afdeling!</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:5%">#</th>
+
+                    <th style="width:11.11%">Naam (<?php echo $countAantalLeden ?>)</th>
+
+                    <th style="width:11.11%">Eenheid</th>
+
+                    <th style="width:11.11%">Telefoonnummer</th>
+
+                    <th style="width:11.11%">E-Mail</th>
+
+                    <th style="width:11.11%">Op gesprek</th>
+
+                    <th style="width:11.11%">Ingewerkt (<?php echo $countAantalIngewerkt ?> / <?php echo $countAantalNietIngewerkt ?>)</th>
+
+                    <th style="width:11.11%">Porto (<?php echo $countAantalPorto ?> / <?php echo $countAantalNietPorto ?>)</th>
+
+                    <th style="width:11.11%">Actief (<?php echo $countAantalStatus ?> / <?php echo $countAantalNietStatus ?>)</th>
+
+                </tr>
+
+                <tr>
+
+                    <th colspan="9">
+
+                        <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
+
+                    </th>
+
+                </tr>
+
+            <tbody>
+                <?php
+
+                $getLeden = $db->query("SELECT * FROM users WHERE eenheid = '" . $userFetch['eenheid'] . "'");
+
+                $countLeden = $getLeden->num_rows;
 
 
 
-                <table class="table table-striped table-hover">
+                while ($fetchLeden = $getLeden->fetch_array()) {
 
-                    <thead>
+                ?>
 
-                        <tr>
+                    <script>
+                        jQuery(document).ready(function($) {
 
-                            <th># </th>
+                            $(".clickable-row").click(function() {
 
-                            <th>Naam (<?php echo $countAantalLeden ?>)</th>
-
-                            <th>Eenheid</th>
-
-                            <th>Telefoonnummer</th>
-
-                            <th>E-Mail</th>
-
-                            <th>Op gesprek</th>
-
-                            <th>Ingewerkt (<?php echo $countAantalIngewerkt ?> / <?php echo $countAantalNietIngewerkt ?>)</th>
-
-                            <th>Porto (<?php echo $countAantalPorto ?> / <?php echo $countAantalNietPorto ?>)</th>
-
-                            <th>Actief (<?php echo $countAantalStatus ?> / <?php echo $countAantalNietStatus ?>)</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        <?php
-
-                        $getLeden = $db->query("SELECT * FROM users WHERE eenheid = '" . $userFetch['eenheid'] . "'");
-
-                        $countLeden = $getLeden->num_rows;
-
-
-
-                        while ($fetchLeden = $getLeden->fetch_array()) {
-
-                        ?>
-
-                        <script>
-
-                            jQuery(document).ready(function($) {
-
-                                $(".clickable-row").click(function() {
-
-                                    window.location = $(this).data("href");
-
-                                });
+                                window.location = $(this).data("href");
 
                             });
 
-                        </script>
+                        });
+                    </script>
 
-                            <tr class="clickable-row" data-href="<?php echo $site; ?>/teamleider/lid/<?php echo $fetchLeden['id']; ?>">
+                    <tr class="clickable-row" data-href="<?php echo $site; ?>/teamleider/lid/<?php echo $fetchLeden['id']; ?>">
 
-                                <td class="client-avatar">
+                        <td class="client-avatar">
 
-                                    <img alt="image" style="height:25px;" src="<?php echo $fetchLeden['avatar']; ?>">
+                            <img alt="image" style="height:25px;" src="<?php echo $fetchLeden['avatar']; ?>">
 
-                                </td>
+                        </td>
 
-                                <td>
+                        <td>
 
-                                    <?php echo $fetchLeden['username']; ?>
+                            <?php echo $fetchLeden['username']; ?>
 
-                                </td>
+                        </td>
 
-                                <td>
+                        <td>
 
-                                    <?php echo $fetchLeden['eenheid']; ?>
+                            <?php echo $fetchLeden['eenheid']; ?>
 
-                                </td>
+                        </td>
 
-                                <td class="contact-type">
+                        <td class="contact-type">
 
-                                    <?php
+                            <?php
 
-                                    if (empty($fetchLeden['telefoon'])) {
+                            if (empty($fetchLeden['telefoon'])) {
 
-                                        echo 'Geen telefoonnummer';
+                                echo 'Geen telefoonnummer';
+                            } else {
 
-                                    } else {
+                                echo $fetchLeden['telefoon'];
+                            }
 
-                                        echo $fetchLeden['telefoon'];
+                            ?>
 
-                                    }
+                        </td>
 
-                                    ?>
+                        <td>
 
-                                </td>
+                            <?php echo $fetchLeden['email']; ?>
 
-                                <td>
+                        </td>
 
-                                    <?php echo $fetchLeden['email']; ?>
+                        <td class="client-status">
 
-                                </td>
+                            <?php
 
-                                <td class="client-status">
+                            if ($fetchLeden['opgesprek'] == 1) {
 
-                                    <?php
+                                echo '<span class="label label-danger">Op gesprek</span>';
+                            } else {
 
-                                    if ($fetchLeden['opgesprek'] == 1) {
+                                echo '';
+                            }
 
-                                        echo '<span class="label label-danger">Op gesprek</span>';
+                            ?>
 
-                                    } else {
+                        </td>
 
-                                        echo '';
+                        <td class="client-status">
 
-                                    }
+                            <?php
 
-                                    ?>
+                            if ($fetchLeden['ingewerkt'] == 1) {
 
-                                </td>
+                                echo '<span class="label label-primary">Ingewerkt</span>';
+                            } else {
 
-                                <td class="client-status">
+                                echo '<span class="label label-danger">Ingewerkt</span>';
+                            }
 
-                                    <?php
+                            ?>
 
-                                    if ($fetchLeden['ingewerkt'] == 1) {
+                        </td>
 
-                                        echo '<span class="label label-primary">Ingewerkt</span>';
+                        <td class="client-status">
 
-                                    } else {
+                            <?php
 
-                                        echo '<span class="label label-danger">Ingewerkt</span>';
+                            if ($fetchLeden['porto'] == 1) {
 
-                                    }
+                                echo '<span class="label label-primary">Porto</span>';
+                            } else {
 
-                                    ?>
+                                echo '<span class="label label-danger">Porto</span>';
+                            }
 
-                                </td>
+                            ?>
 
-                                <td class="client-status">
+                        </td>
 
-                                    <?php
+                        <td class="client-status">
 
-                                    if ($fetchLeden['porto'] == 1) {
+                            <?php
 
-                                        echo '<span class="label label-primary">Porto</span>';
+                            if ($fetchLeden['Status'] == 0) {
 
-                                    } else {
+                                echo '<span class="label label-primary">Actief</span>';
+                            } else if ($fetchLeden['Status'] == 1) {
 
-                                        echo '<span class="label label-danger">Porto</span>';
+                                echo '<span class="label label-danger">Inactief</span>';
+                            } else if ($fetchLeden['Status'] == 2) {
 
-                                    }
+                                echo '<span class="label label-warning">Op gesprek</span>';
+                            } else if ($fetchLeden['Status'] == 3) {
 
-                                    ?>
+                                echo '<span class="label label-default">Geschorst</span>';
+                            }
 
-                                </td>
+                            ?>
+                        </td>
 
-                                <td class="client-status">
-
-                                    <?php
-
-                                    if ($fetchLeden['Status'] == 0) {
-
-                                        echo '<span class="label label-primary">Actief</span>';
-
-                                    } else if ($fetchLeden['Status'] == 1) {
-
-                                        echo '<span class="label label-danger">Inactief</span>';
-
-                                    } else if ($fetchLeden['Status'] == 2) {
-
-                                        echo '<span class="label label-warning">Op gesprek</span>';
-
-                                    } else if ($fetchLeden['Status'] == 3) {
-
-                                        echo '<span class="label label-default">Geschorst</span>';
-
-                                    }
-
-                                    ?>
-
-                                </td>
-
-
-
-                            </tr>
-
-                        <?php } ?>
-
-                    </tbody>
-
-                </table>
-
-                <?php
-
-                if ($countLeden <= 0) { ?>
-
-                    <h3 style="text-align:center">Geen leden onder jou beheer!</h3>
-
-                    <br />
-
+                    </tr>
                 <?php } ?>
+            </tbody>
+        </table>
+        <?php
+        if ($countLeden <= 0) { ?>
+            <h3 style="text-align:center">Geen leden onder jou beheer!</h3>
+            <br />
+        <?php } ?>
+        </thead>
 
-            </div>
+        </table>
 
-        </div>
+
+
+
 
     </div>
+
+
+
+
 
 <?php } ?>

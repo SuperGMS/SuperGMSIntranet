@@ -1,3 +1,3 @@
-JP_CONFIG['owlCarousel'] = {
-  rtl : true
-};
+JP_CONFIG['owlCarousel'] = {
+  rtl : true
+};

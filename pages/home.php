@@ -1,185 +1,207 @@
-<?php
-include_once("../includes/class.database.php");
-if ($userFetch['opgesprek'] == '1') {
-	header("Location: opgesprek");
-}
-?>
-
-<?php error_reporting(0); ?>
-
-
-<div class="row-col">
-	<div class="col-lg b-r">
-		<div class="row no-gutter">
-			<div class="col-xs-6 col-sm-4 b-r b-b">
-				<div class="padding">
-					<div>
-						<span class="pull-right"><span class="label green pull-right">Lid</span></i></span>
-						<span class="text-muted l-h-1x">Mijn cijfers</span>
-					</div>
-					<div class="text-center">
-						<h2 class="text-center _600"><?php echo $cijferCount; ?></h2>
-						<p class="text-muted m-b-md">Cijfers</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-6 col-sm-4 b-r b-b">
-				<div class="padding">
-					<div>
-						<span class="pull-right"><span class="label green pull-right">Lid</span></i></span>
-						<span class="text-muted l-h-1x">Ongelezen mails</span>
-					</div>
-					<div class="text-center">
-						<h2 class="text-center _600"><?php echo $emailCount; ?></h2>
-						<p class="text-muted m-b-md">Mails</p>
-					</div>
-				</div>
-			</div>
-			<div class="col-xs-6 col-sm-4 b-r b-b">
-				<div class="padding">
-					<div>
-						<span class="pull-right"><span class="label green pull-right">Lid</span></i></span>
-						<span class="text-muted l-h-1x">Openstaande vacatures</span>
-					</div>
-					<div class="text-center">
-						<h2 class="text-center _600"><?php echo $trainingCount; ?></h2>
-						<p class="text-muted m-b-md">Vacatures</p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php if ($instructeur == 1) { ?>
-			<div class="row no-gutter">
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label pink pull-right">Instructeur</span></span>
-							<span class="text-muted l-h-1x">Openstaande training aanvragen</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $TrainingOpenstaandCount; ?></h2>
-							<p class="text-muted m-b-md">Aanvragen</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label pink pull-right">Instructeur</span></span>
-							<span class="text-muted l-h-1x">Openstaande mails door leden</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $ContactLedenInstructeurCount; ?></h2>
-							<p class="text-muted m-b-md">Mails</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label pink pull-right">Instructeur</span></span>
-							<span class="text-muted l-h-1x">Cijfers uitgedeeld</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $UitgedeeldCijfersCount; ?></h2>
-							<p class="text-muted m-b-md">Cijfers</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		<?php } ?>
-		<?php if ($leiding == 1) { ?>
-			<div class="row no-gutter">
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label amber pull-right">Leidinggevende</span></span>
-							<span class="text-muted l-h-1x">Openstaande aanmeldingen</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $OpenstaandeAanmeldingenCount; ?></h2>
-							<p class="text-muted m-b-md">Aanmeldingen</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label amber pull-right">Leidinggevende</span></span>
-							<span class="text-muted l-h-1x">Openstaande mails door leden</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $ContactLedenLeidingCount; ?></h2>
-							<p class="text-muted m-b-md">Mails</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-xs-6 col-sm-4 b-r b-b">
-					<div class="padding">
-						<div>
-							<span class="pull-right"><span class="label amber pull-right">Leidinggevende</span></span>
-							<span class="text-muted l-h-1x">Openstaande ingevulde vacatures</span>
-						</div>
-						<div class="text-center">
-							<h2 class="text-center _600"><?php echo $vacature_reactieCount; ?></h2>
-							<p class="text-muted m-b-md">Vacatures</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		<?php  } ?>
-		<div class="padding">
-			<div class="box" style="border-radius:10px;">
-				<div class="box-header b-b">
-					<h3 style="text-align:center">Tijdlijn</h3>
-				</div>
-				<div>
-					<div class="row-col">
-						<div class="col-sm-2 b-r light lt" style="border-radius:0px 0px 10px 10px;">
-							<div class="p-a-md">
-								<?php
-								$getTimeLine = $db->query("SELECT * FROM timeline ORDER BY date DESC LIMIT 5");
-								while ($fetchLine = $getTimeLine->fetch_array()) {
-								?>
-									<div class="timeline-item">
-										<div class="row">
-											<div class="col-xs-3 date">
-												<i class="fa fa-briefcase"></i>
-												<?php echo $fetchLine['date']; ?>
-												<br />
-											</div>
-											<div class="col-xs-7 content no-top-border">
-												<?php
-												if ($leiding == 1 or $teamleider == 1) {
-													if (isset($_POST['delTime'])) {
-														$id = $db->real_escape_string($_POST['id']);
-
-														$db->query("DELETE FROM timeline WHERE id = '" . $id . "'");
-												?>
-														<script>
-															location.href = '<?php echo $site; ?>/home';
-														</script>
-													<?php
-													}
-													?>
-													<form action="" method="post">
-														<input type="text" name="id" style="display:none;" value="<?php echo $fetchLine['id']; ?>">
-														<input type="submit" value="Delete" name="delTime" style="float:right;">
-													</form>
-												<?php } ?>
-												<p class="m-b-xs"><strong><?php echo $fetchLine['title']; ?></strong></p>
-
-												<p><?php echo $fetchLine['bericht']; ?></p>
-
-											</div>
-										</div>
-									</div>
-								<?php } ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<?php
+include_once("../includes/class.database.php");
+if ($userFetch['opgesprek'] == '1') {
+	header("Location: opgesprek");
+}
+?>
+
+<?php error_reporting(0); ?>
+
+<style>
+	main .lid .visits svg circle {
+		stroke-dasharray: 0;
+		stroke: #6e002a
+	}
+
+	main .instructeur .visits svg circle {
+		stroke-dasharray: 0;
+		stroke: red
+	}
+
+	main .leidinggevende .visits svg circle {
+		stroke-dasharray: 0;
+		stroke: orange
+	}
+
+	main .analyse .progresss .percentage {
+		left: -2.5px;
+	}
+
+	main .analyse h3 {
+		margin-left: 0
+	}
+</style>
+
+<h1>Dashboard</h1>
+
+<div class="analyse lid">
+	<div class="visits">
+		<div class="status">
+			<div class="info">
+				<h3>Mijn</h3>
+				<h1>Cijfers</h1>
+			</div>
+			<div class="progresss">
+				<svg>
+					<circle cx="38" cy="38" r="36"></circle>
+				</svg>
+				<div class="percentage">
+					<h1><?= $cijferCount; ?></h1>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="visits">
+		<div class="status">
+			<div class="info">
+				<h3>Ongelezen</h3>
+				<h1>Mails</h1>
+			</div>
+			<div class="progresss">
+				<svg>
+					<circle cx="38" cy="38" r="36"></circle>
+				</svg>
+				<div class="percentage">
+					<h1><?= $emailCount; ?></h1>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="visits">
+		<div class="status">
+			<div class="info">
+				<h3>Openstaande</h3>
+				<h1>Vacatures</h1>
+			</div>
+			<div class="progresss">
+				<svg>
+					<circle cx="38" cy="38" r="36"></circle>
+				</svg>
+				<div class="percentage">
+					<h1><?= $trainingCount; ?></h1>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<?php if ($instructeur == 1) { ?>
+	<div class="analyse instructeur">
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Openstaande</h3>
+					<h1>Training aanvragen</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?= $TrainingOpenstaandCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Openstaande</h3>
+					<h1>Mails door leden</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?= $ContactLedenInstructeurCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Uitgedeelde</h3>
+					<h1>Cijfers</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?= $UitgedeeldCijfersCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+
+<?php if ($leiding == 1) { ?>
+	<div class="analyse leidinggevende">
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Openstaande</h3>
+					<h1>Aanmeldingen</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?= $OpenstaandeAanmeldingenCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Openstaande</h3>
+					<h1>Mails door leden</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?php echo $ContactLedenLeidingCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="visits">
+			<div class="status">
+				<div class="info">
+					<h3>Openstaande</h3>
+					<h1>Ingevulde vacatures</h1>
+				</div>
+				<div class="progresss">
+					<svg>
+						<circle cx="38" cy="38" r="36"></circle>
+					</svg>
+					<div class="percentage">
+						<h1><?= $vacature_reactieCount; ?></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php  } ?>
+
+<div class="new-users">
+	<h2>Nieuwste leden</h2>
+	<div class="user-list">
+		<?php
+		$getNieuweLeden = $db->query("SELECT * FROM `users` WHERE `opgesprek` = '0' ORDER BY id DESC LIMIT 4");
+		while ($nieuwLid = $getNieuweLeden->fetch_array()) { ?>
+			<div class="user">
+				<img src="<?= $nieuwLid['avatar'] ?>">
+				<h2><?= $nieuwLid['username'] ?></h2>
+				<p><?= $nieuwLid['eenheid'] ?></p>
+			</div>
+		<?php } ?>
+	</div>
 </div>

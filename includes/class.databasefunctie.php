@@ -22,6 +22,10 @@ $linkserver = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $result = $mysqli->query("SELECT * FROM mod_licensing WHERE licensekey='" . $licensekey . "'");
 $resultstatus = $mysqli->query("SELECT status FROM mod_licensing WHERE licensekey='" . $licensekey . "'");
 $result2 = $result->fetch_assoc();
+$packageID = $mysqli->query("SELECT * FROM tblhosting WHERE id='" . $result2['serviceid'] . "'");
+$packageID2 = $packageID->fetch_assoc();
+$packageName = $mysqli->query("SELECT * FROM tblproducts WHERE id='" . $packageID2['packageid'] . "'");
+$packageName2 = $packageName->fetch_assoc();
 
 if ($result->num_rows == 0) {
 	if (strpos($linkserver, '/licentie') === false) {

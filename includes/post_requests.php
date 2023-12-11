@@ -95,10 +95,13 @@ if (isset($_POST["bewerkConfiguratieSpecialisatie1"])) {
 if (isset($_POST["voegConfiguratieSpecialisatie"])) {
     $column1 = $_POST['column1'];
 
-    $query = $db->query("INSERT INTO gms_eenheden_aanvullend (naam,value) VALUES ($column1,$column1)");
+    $query = $db->query("INSERT INTO gms_eenheden_aanvullend (naam,value) VALUES ('$column1','$column1')");
     if ($query) {
         $response['success'] = true;
         $response['message'] = 'Aanvullende afdeling succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Aanvullende afdeling niet succesvol toegevoegd';
     }
 }
 

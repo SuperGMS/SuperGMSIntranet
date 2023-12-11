@@ -49,7 +49,7 @@ if ($userFetch['opgesprek'] == '1') {
         <aside>
             <div class="toggle">
                 <div class="logo">
-                    <img src="https://district-rijnmond.net/logo.png">
+                    <img src="<?= $configuratieFetch['serverLogo']; ?>">
                     <h2>Mijn <span class="danger">District</span></h2>
                 </div>
                 <div class="close" id="close-btn">
@@ -309,7 +309,7 @@ if ($userFetch['opgesprek'] == '1') {
                     </div>
                 </a>
 
-                <a href="http://supergms.nl/gms/districtrijnmond">
+                <a href="http://supergms.nl/gms/<?= $configuratieFetch['Link']; ?>">
                     <div class="notification">
                         <div class="icon">
                             <span class="material-icons-sharp">

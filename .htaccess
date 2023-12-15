@@ -18,6 +18,8 @@ RewriteRule ^mailbox/bericht-maken index.php?p=mailbox-maak [L]
 RewriteRule ^mailbox/delete/(.*)$ index.php?p=mailbox-delete&id=$1 [L]
 RewriteRule ^mailbox/reply/(.*)$ index.php?p=mailbox-reply&id=$1 [L]
 RewriteRule ^mailbox/belangrijk index.php?p=mailbox-belangrijk [L]
+RewriteRule ^mailbox/prullenbak index.php?p=mailbox-prullenbak [L]
+RewriteRule ^mailbox/verzonden index.php?p=mailbox-verzonden [L]
 
 RewriteRule ^trainingen/bekijk/(.*)$ index.php?p=trainingen-bekijk&id=$1 [L]
 
@@ -41,6 +43,7 @@ RewriteRule ^teamleider/vacature index.php?p=teamleider-vacature [L]
 RewriteRule ^teamleider/bekijk/vacature/(.*)$ index.php?p=teamleider-bekijk-vacature&id=$1 [L]
 RewriteRule ^teamleider/send-mail index.php?p=teamleider-send-mail [L]
 RewriteRule ^teamleider/overzicht index.php?p=teamleider-overzicht [L]
+RewriteRule ^teamleider/nieuw/lid index.php?p=teamleider-addlid [L]
 
 RewriteRule ^development/todo-list(.*)$ index.php?p=development-todolist&id=$1 [L]
 

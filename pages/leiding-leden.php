@@ -347,9 +347,10 @@ if ($leiding != 1) {
                 text-size-adjust: 10
             }
         </style>
-        <button class="selectnieuwe"><a href="./nieuw/lid">test</a></button>
-
-
-
+        <a href="./nieuw/lid/">
+            <button style="margin-top: 25px;width:100%;margin-bottom:25px;background:green;border-color:green;color:white;" class="selectnieuwe">
+                <h3>Maak nieuw lid</h3>
+            </button>
+        </a>
     </div>
 <?php } ?>

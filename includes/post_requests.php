@@ -105,6 +105,101 @@ if (isset($_POST["voegConfiguratieSpecialisatie"])) {
     }
 }
 
+if (isset($_POST["voegLidToe"])) {
+    $eenheid = $db->real_escape_string($_POST['eenheid']);
+    $naam = $db->real_escape_string($_POST['naam']);
+    $username = $db->real_escape_string($_POST['username']);
+    $achternaam = $db->real_escape_string($_POST['achternaam']);
+    $leeftijd = $db->real_escape_string($_POST['leeftijd']);
+    $geboortedatum = $db->real_escape_string($_POST['geboortedatum']);
+    $email = $db->real_escape_string($_POST['email']);
+    $opgesprek = $db->real_escape_string($_POST['opgesprek']);
+    $telefoon = $db->real_escape_string($_POST['telefoon']);
+    $roepnummer = $db->real_escape_string($_POST['roepnummer']);
+    $ingewerkt = $db->real_escape_string($_POST['ingewerkt']);
+    $specialisatie = $db->real_escape_string($_POST['specialisatie']);
+    $status = $db->real_escape_string($_POST['status']);
+    $porto = $db->real_escape_string($_POST['porto']);
+    $reserve_centralist = $db->real_escape_string($_POST['reserve_centralist']);
+    $salt = generateSalt();
+    $password = crypt($_POST['password'], $salt);
+
+    $query = $db->query("INSERT INTO users SET 
+                                        eenheid='" . $eenheid . "',
+                                        salt='" . $salt . "',
+                                        password='" . $password . "',
+                                        naam='" . $naam . "',
+                                        username='" . $username . "',
+                                        achternaam='" . $achternaam . "',
+                                        leeftijd='" . $leeftijd . "',
+                                        geboortedatum='" . $geboortedatum . "',
+                                        email='" . $email . "',
+                                        telefoon='" . $telefoon . "',
+                                        roepnummer='" . $roepnummer . "',
+                                        ingewerkt='" . $ingewerkt . "',
+                                        specialisatie='" . $specialisatie . "', 
+                                        Status='" . $status . "',
+                                        porto='" . $porto . "',
+                                        reserve_centralist='" . $reserve_centralist . "',
+                                        opgesprek='" . $opgesprek . "'");
+
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Lid succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["BewerkGebruiker"])) {
+    $naam = $db->real_escape_string($_POST['naam']);
+    $achternaam = $db->real_escape_string($_POST['achternaam']);
+    $leeftijd = $db->real_escape_string($_POST['leeftijd']);
+    $geboortedatum = $db->real_escape_string($_POST['geboortedatum']);
+    $email = $db->real_escape_string($_POST['email']);
+    $telefoon = $db->real_escape_string($_POST['telefoon']);
+
+    $eenheid = $db->real_escape_string($_POST['eenheid']);
+    $roepnummer = $db->real_escape_string($_POST['roepnummer']);
+    $reserve_centralist = $db->real_escape_string($_POST['reserve_centralist']);
+    $status = $db->real_escape_string($_POST['status']);
+    $specialisatie = $db->real_escape_string($_POST['specialisatie']);
+    $ingewerkt = $db->real_escape_string($_POST['ingewerkt']);
+    $porto = $db->real_escape_string($_POST['porto']);
+    $opgesprek = $db->real_escape_string($_POST['opgesprek']);
+
+    $id = $db->real_escape_string($_POST['id']);
+
+    $query = $db->query("UPDATE users SET 
+    naam='" . $naam . "',
+    achternaam='" . $achternaam . "',
+    leeftijd='" . $leeftijd . "',
+    geboortedatum='" . $geboortedatum . "',
+    email='" . $email . "',
+    telefoon='" . $telefoon . "',
+    eenheid='" . $eenheid . "',
+    roepnummer='" . $roepnummer . "',
+    reserve_centralist='" . $reserve_centralist . "',
+    status='" . $status . "',
+    specialisatie='" . $specialisatie . "',
+    ingewerkt='" . $ingewerkt . "',
+    porto='" . $porto . "',
+    opgesprek='" . $opgesprek . "' WHERE id='" . $id . "'");
+
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Lid succesvol bewerkt';
+    }
+}
+
+if (isset($_POST["VerwijderGebruiker"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM users WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Gebruiker  succesvol verwijderd';
+    }
+}
+
 if (isset($_POST["bewerkConfiguratieSpecialisatie2"])) {
     $ID = $_POST['id'];
 
@@ -150,6 +245,7 @@ if (isset($_POST['postTraining5'])) {
         $response['message'] = 'Training succesvol voltooid';
     }
 }
+
 if (isset($_POST['postTraining6'])) {
     $Instructeur = $_POST['naam'];
     $ID = $_POST['id'];
@@ -160,6 +256,7 @@ if (isset($_POST['postTraining6'])) {
         $response['message'] = 'Training succesvol afgezegd';
     }
 }
+
 if (isset($_POST['postTraining4'])) {
     $Instructeur = $_POST['naam'];
     $ID = $_POST['id'];
@@ -170,5 +267,16 @@ if (isset($_POST['postTraining4'])) {
         $response['message'] = 'Training succesvol gewijzigd';
     }
 }
+
+if (isset($_POST["opslaanGebruikGMS"])) {
+    $optie = $_POST['test'];
+
+    $query = $db->query("UPDATE Configuratie SET gebruikGMS='" . $optie . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Optie succesvol aangepast';
+    }
+}
+
 header('Content-Type: application/json');
 echo json_encode($response);

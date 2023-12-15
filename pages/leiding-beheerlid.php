@@ -42,7 +42,7 @@ if ($leiding != 1) {
 
         <?= $informatienognietafgemaakt ?>
 
-        <form action="" method="POST">
+        <form id="BewerkGebruiker" action="" method="POST">
             <div class="recent-orders">
                 <table class="table">
                     <th>
@@ -165,6 +165,7 @@ if ($leiding != 1) {
                                                     } ?>>Ja</option>
                             </select>
                         </div>
+
                         <br />
 
                         <div class="form-group">
@@ -174,6 +175,19 @@ if ($leiding != 1) {
                                                         echo 'selected';
                                                     } ?>>Nee</option>
                                 <option value="1" <?php if ($fetchLid['porto'] == '1') {
+                                                        echo 'selected';
+                                                    } ?>>Ja</option>
+                            </select>
+                        </div>
+                        <br />
+                        
+                        <div class="form-group">
+                            <label for="inputPassword3" class="form-label-input">Op gesprek:</label>
+                            <select name="opgesprek" class="form-control-input">
+                                <option value="0" <?php if ($fetchLid['opgesprek'] == '0') {
+                                                        echo 'selected';
+                                                    } ?>>Nee</option>
+                                <option value="1" <?php if ($fetchLid['opgesprek'] == '1') {
                                                         echo 'selected';
                                                     } ?>>Ja</option>
                             </select>
@@ -202,9 +216,13 @@ if ($leiding != 1) {
                                 font-size: 15;
                                 font-weight: 600;
                             }
-                        </style>
+                        </style> <input type="text" name="id" value="<?php echo $fetchLid['id']; ?>" style="display:none" class="form-control-input" />
                         <input type="submit" style="width:100%" name="wijzigen" value="Bewerk gegevens" class="btn-success btn" />
-                    </th>
+        </form>
+        <form id="VerwijderGebruiker"> <input type="text" name="id" value="<?php echo $fetchLid['id']; ?>" style="display:none" class="form-control-input" />
+
+            <input type="submit" style="width:100%;background:red" name="verwijderGebruiker" value="Verwijder gebruiker" class="btn-success btn" />
+            </th>
             </div>
         </form>
         </table>

@@ -40,6 +40,11 @@ if ($userFetch['opgesprek'] == '1') {
         border-radius: 50%;
         margin-left: 12.5%;
     }
+
+    main table tbody tr td:last-child,
+    main table tbody tr td:first-child {
+        display: table-cell;
+    }
 </style>
 
 <body class="dark-mode-variables">
@@ -291,41 +296,47 @@ if ($userFetch['opgesprek'] == '1') {
                     </a>
                 <?php } ?>
 
-                <a href="https://discord.gg/VfKJnuVJ4T">
-                    <div class="notification">
-                        <div class="icon">
-                            <span class="material-icons-sharp">
-                                discord
-                            </span>
-                        </div>
-                        <div class="content">
-                            <div class="info">
-                                <h3>Discord server</h3>
-                                <small class="text_muted">
-                                    Whitelist server
-                                </small>
+                <?php if ($configuratieFetch['gebruikWhitelist'] == "1") { ?>
+                    <a href="<?= $configuratieFetch['gebruikWhitelistLink']; ?>">
+                        <div class="notification">
+                            <div class="icon">
+                                <span class="material-icons-sharp">
+                                    discord
+                                </span>
+                            </div>
+                            <div class="content">
+                                <div class="info">
+                                    <h3>Discord server</h3>
+                                    <small class="text_muted">
+                                        Whitelist server
+                                    </small>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                <?php } ?>
 
-                <a href="http://supergms.nl/gms/<?= $configuratieFetch['Link']; ?>">
-                    <div class="notification">
-                        <div class="icon">
-                            <span class="material-icons-sharp">
-                                cast
-                            </span>
-                        </div>
-                        <div class="content">
-                            <div class="info">
-                                <h3>Geïntegreerd meldkamer systeem</h3>
-                                <small class="text_muted">
-                                    Druk hier om naar het systeem te gaan!
-                                </small>
+                <?php if ($configuratieFetch['gebruikGMS'] == "0") { ?>
+                    <div id="gmsDiv">
+                        <a href="http://supergms.nl/gms/<?= $configuratieFetch['Link']; ?>">
+                            <div class="notification">
+                                <div class="icon">
+                                    <span class="material-icons-sharp">
+                                        cast
+                                    </span>
+                                </div>
+                                <div class="content">
+                                    <div class="info">
+                                        <h3>Geïntegreerd meldkamer systeem</h3>
+                                        <small class="text_muted">
+                                            Druk hier om naar het systeem te gaan!
+                                        </small>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
-                </a>
+                <?php } ?>
 
             </div>
 
@@ -716,6 +727,150 @@ if ($userFetch['opgesprek'] == '1') {
                     // Handle the response from the server
                     console.log("Form submitted successfully:", response);
                     if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#opslaanGebruikGMS").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&opslaanGebruikGMS"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        $('#gmsDiv').load(location.href + ' #gmsDiv');
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegLidToe").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegLidToe"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        $('#gmsDiv').load(location.href + ' #gmsDiv');
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#VerwijderGebruiker").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&VerwijderGebruiker"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        $('#gmsDiv').load(location.href + ' #gmsDiv');
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#BewerkGebruiker").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&BewerkGebruiker"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        $('#gmsDiv').load(location.href + ' #gmsDiv');
                         // Show toastr success notification
                         toastr.success(response.message);
                     } else {

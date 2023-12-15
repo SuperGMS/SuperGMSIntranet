@@ -872,6 +872,43 @@ if ($leiding != 1) {
             <tbody>
                 <tr>
                     <td>
+                        <label class="label" style="color: white;">Gebruik het GMS?</label>
+                    </td>
+                </tr>
+            </tbody>
+            <form id="opslaanGebruikGMS">
+                <tbody>
+                    <tr>
+                        <td>
+                            <select style="width:100%;" class="selectnieuwe" id="test" name="test" type="text" placeholder="Opmerking">
+                                <option value="0" <?php if ($configuratieFetch["gebruikGMS"] == 0) {
+                                                        echo "selected";
+                                                    } ?>>Ja</option>
+                                <option value="1" <?php if ($configuratieFetch["gebruikGMS"] == 1) {
+                                                        echo "selected";
+                                                    } ?>>Nee</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="submit" name="opslaanGebruikGMS" class="button is-success is-focused nieuw" value="Aanpassen">
+                        </td>
+                    </tr>
+                </tbody>
+            </form>
+            <tbody>
+                <tr>
+                    <td>
+                        <hr style="background:red;width:100%;height:5px;border-radius:5px;margin-top: -10px;">
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td>
                         <label class="label" style="color: white;">Configuratie aanvullende afdelingen</label>
                     </td>
                 </tr>
@@ -935,72 +972,5 @@ if ($leiding != 1) {
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
-    <script>
-        $(document).ready(function() {
-            $('#add-form').submit(function(event) {
-                event.preventDefault();
-                var formData = new FormData(this);
-                $.ajax({
-                    url: 'https://<?= $_SERVER['SERVER_NAME'] ?>/includes/class.post.php?id=1',
-                    type: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 'success') {
-                            $('#add-form').get(0).reset();
-                            toastr.success('New row added successfully', 'Success');
-                            refreshTable();
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-            $(document).on('click', '.edit-button', function() {
-                var $row = $(this).closest('tr');
-                var id = $row.find('td:eq(0)').text();
-                var value = $row.find('td:eq(1) input[type="text"]').val();
-                var formData = new FormData();
-                formData.append('id', id);
-                formData.append('value', value);
-                $.ajax({
-                    url: 'https://<?= $_SERVER['SERVER_NAME'] ?>/includes/class.post.php?id=3',
-                    type: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
-                        if (response.status === 'success') {
-                            toastr.success('Value updated successfully', 'Success');
-                            refreshTable();
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-
-            function refreshTable() {
-                $.ajax({
-                    url: 'https://<?= $_SERVER['SERVER_NAME'] ?>/includes/class.post.php?id=2',
-                    type: 'GET',
-                    dataType: 'html',
-                    success: function(data) {
-                        $('#specialisaties-table').html(data);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            }
-        });
-    </script>
 <?php }
 ?>

@@ -887,6 +887,42 @@ if ($userFetch['opgesprek'] == '1') {
             },
         });
     });
+    $("#postCreerVacature").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&postCreerVacature"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        $('#gmsDiv').load(location.href + ' #gmsDiv');
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
 </script>
 
 </html>

@@ -105,6 +105,21 @@ if (isset($_POST["voegConfiguratieSpecialisatie"])) {
     }
 }
 
+if (isset($_POST["postCreerVacature"])) {
+    $Uitleg = $_POST['Uitleg'];
+    $vacatureNaam = $_POST['vacatureNaam'];
+    $date = date("Y/m/d");
+
+    $query = $db->query("INSERT INTO vacatures (titel,text,date,status) VALUES ('$vacatureNaam','$Uitleg','$date','1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Vacature succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Vacature niet succesvol toegevoegd';
+    }
+}
+
 if (isset($_POST["voegLidToe"])) {
     $eenheid = $db->real_escape_string($_POST['eenheid']);
     $naam = $db->real_escape_string($_POST['naam']);

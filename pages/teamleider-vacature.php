@@ -879,7 +879,7 @@ if ($teamleider != 1) {
             </tbody>
         </table>
         <div style="width:35%;float:right">
-            <form id="postTraining" method="POST">
+            <form id="postCreerVacature" method="POST">
                 <table style="width: 130%;float: right;position: relative;left: 5%;">
                     <thead>
                         <tr>
@@ -898,7 +898,7 @@ if ($teamleider != 1) {
                     <tbody>
                         <tr>
                             <td>
-                                <input class="selectnieuwe" name="opmerking" type="text" placeholder="Opmerking">
+                                <input class="selectnieuwe" name="vacatureNaam" type="text" placeholder="Opmerking">
                             </td>
                         </tr>
                     </tbody>
@@ -913,7 +913,7 @@ if ($teamleider != 1) {
                         <tr>
                             <td colspan="2">
                                 <div class="control">
-                                    <input class="selectnieuwe" name="opmerking" type="text" placeholder="Opmerking">
+                                    <input class="selectnieuwe" name="Uitleg" type="text" placeholder="Opmerking">
                                 </div>
                             </td>
                         </tr>
@@ -922,7 +922,7 @@ if ($teamleider != 1) {
                         <tr>
                             <td>
                                 <div class="control">
-                                    <input type="submit" name="postTraining" class="button is-success is-focused nieuw" value="Aanmaken">
+                                    <input type="submit" name="postCreerVacature" class="button is-success is-focused nieuw" value="Aanmaken">
                                 </div>
                             </td>
                         </tr>

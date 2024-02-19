@@ -608,6 +608,26 @@ if ($userFetch['opgesprek'] == '1') {
             formData += "&bewerkConfiguratieSpecialisatie1"; // Add the 'cleanup' parameter with a value of 1
         } else if (formId.includes("bewerkConfiguratieSpecialisatie2")) {
             formData += "&bewerkConfiguratieSpecialisatie2"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie1")) {
+            formData += "&bewerkConfiguratieinmeldoptiespolitie1"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie2")) {
+            formData += "&bewerkConfiguratieinmeldoptiespolitie2"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance1")) {
+            formData += "&bewerkConfiguratieinmeldoptiesambulance1"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance2")) {
+            formData += "&bewerkConfiguratieinmeldoptiesambulance2"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar1")) {
+            formData += "&bewerkConfiguratieinmeldoptieskmar1"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar2")) {
+            formData += "&bewerkConfiguratieinmeldoptieskmar2"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer1")) {
+            formData += "&bewerkConfiguratieinmeldoptiesbrandweer1"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer2")) {
+            formData += "&bewerkConfiguratieinmeldoptiesbrandweer2"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving1")) {
+            formData += "&bewerkConfiguratieinmeldoptieshandhaving1"; // Add the 'cleanup' parameter with a value of 1
+        } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving2")) {
+            formData += "&bewerkConfiguratieinmeldoptieshandhaving2"; // Add the 'cleanup' parameter with a value of 1
         }
 
         // Send an AJAX request to the server

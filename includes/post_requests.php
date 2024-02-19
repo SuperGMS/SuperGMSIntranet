@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 
 $response = array(
     'success' => false,
-    'message' => 'POST NOT successful'
+    'message' => 'Er is een fout opgetreden (Error: 0X1842)'
 );
 
 if (isset($_POST['postBeheerRank'])) {
@@ -14,7 +14,8 @@ if (isset($_POST['postBeheerRank'])) {
     $rank = $db->real_escape_string($_POST['rank']);
 
     if ($user == 0) {
-        echo 'Er ging iets mis!';
+        $response['success'] = false;
+        $response['message'] = 'Er is een fout opgetreden (Error: 9A1873)';
     } else {
         // Check if a row with the given uid already exists
         $result = $db->query("SELECT * FROM user_rank WHERE uid = '$user'");
@@ -31,7 +32,7 @@ if (isset($_POST['postBeheerRank'])) {
             $response['message'] = 'Machtiging succesvol aangepast';
         } else {
             $response['success'] = false;
-            $response['message'] = 'Er is iets fout gegaan';
+            $response['message'] = 'Er is een fout opgetreden (Error: 3B920)';
         }
     }
 }
@@ -56,9 +57,11 @@ if (isset($_POST['wijzigAddons'])) {
         $response['message'] = 'Wijziging succesvol doorgevoerd';
     } else {
         $response['success'] = false;
-        $response['message'] = 'Er is iets fout gegaan';
+        $response['message'] = 'Er is een fout opgetreden (Error: 8X561)';
     }
 }
+
+// VERDER DE ERRORS AANPASSEN!!!!!!!!
 
 if (isset($_POST['postTraining'])) {
     $naam = $_POST['naamid'];
@@ -78,6 +81,111 @@ if (isset($_POST['postTraining'])) {
     if ($query) {
         $response['success'] = true;
         $response['message'] = 'Formulier succesvol aangevraagd';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptieshandhaving1"])) {
+    $specialisatienaam = $_POST['specialisatienaam'];
+    $ID = $_POST['id'];
+
+    $query = $db->query("UPDATE gms_eenheden_handhaving SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol aangepast';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptieshandhaving2"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM gms_eenheden_handhaving WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol verwijderd';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiesbrandweer1"])) {
+    $specialisatienaam = $_POST['specialisatienaam'];
+    $ID = $_POST['id'];
+
+    $query = $db->query("UPDATE gms_eenheden_brandweer SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol aangepast';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiesbrandweer2"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM gms_eenheden_brandweer WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol verwijderd';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptieskmar1"])) {
+    $specialisatienaam = $_POST['specialisatienaam'];
+    $ID = $_POST['id'];
+
+    $query = $db->query("UPDATE gms_eenheden_kmar SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol aangepast';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptieskmar2"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM gms_eenheden_kmar WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol verwijderd';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiesambulance1"])) {
+    $specialisatienaam = $_POST['specialisatienaam'];
+    $ID = $_POST['id'];
+
+    $query = $db->query("UPDATE gms_eenheden_ambulance SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol aangepast';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiesambulance2"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM gms_eenheden_ambulance WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol verwijderd';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiespolitie1"])) {
+    $specialisatienaam = $_POST['specialisatienaam'];
+    $ID = $_POST['id'];
+
+    $query = $db->query("UPDATE gms_eenheden_politie SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol aangepast';
+    }
+}
+
+if (isset($_POST["bewerkConfiguratieinmeldoptiespolitie2"])) {
+    $ID = $_POST['id'];
+
+    $query = $db->query("DELETE FROM gms_eenheden_politie WHERE id = " . $ID . "");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Waarde succesvol verwijderd';
     }
 }
 

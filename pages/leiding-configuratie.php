@@ -815,6 +815,62 @@ if ($leiding != 1) {
             background-color: #5bc0de;
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #181a1e;
+            padding: 20px;
+            width: 80%;
+            height: 90%;
+            text-align: center;
+            overflow: hidden;
+            overflow-y: scroll;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.7vw;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: var(--color-white);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: white;
+        }
     </style>
 
     <script>
@@ -909,55 +965,507 @@ if ($leiding != 1) {
             <tbody>
                 <tr>
                     <td>
-                        <label class="label" style="color: white;">Configuratie aanvullende afdelingen</label>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="ibox-content">
-                            <h3 style="text-align:center"></h3>
-                            <div class="col-sm-6">
-                                <div class="box">
-                                    <div class="box-body">
-                                        <div id="form-container">
-                                            <table style="width:100%">
-                                                <tr>
-                                                    <th style="width:50%">Waarde</th>
-                                                    <th style="width:25%">Pas aan</th>
-                                                    <th style="width:25%">Verwijder</th>
-                                                </tr>
-                                            </table>
-                                            <table style="width:100%" id="specialisaties-table">
-                                                <?php
-                                                $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_aanvullend");
-                                                while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
-                                                    <tr>
-                                                        <form id="bewerkConfiguratieSpecialisatie1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
-                                                            <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
-                                                            <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
-                                                            <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieSpecialisatie1" value="Pas aan"></td>
-                                                        </form>
-                                                        <form id="bewerkConfiguratieSpecialisatie2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
-                                                            <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
-                                                            <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieSpecialisatie2" value="Verwijder"></td>
-                                                        </form>
-                                                    </tr>
-                                                <?php } ?>
-                                            </table>
-                                            <form id="voegConfiguratieSpecialisatie">
-                                                <table style="width:100%">
-                                                    <tr>
-                                                        <td style='display:none'></td>
-                                                        <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
-                                                        <td><input type="submit" value="Voeg toe"></td>
-                                                    </tr>
-                                                </table>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfigureerInmeldoptieshandhaving');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerInmeldoptieshandhaving');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfigureerInmeldoptiesbrandweer');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerInmeldoptiesbrandweer');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfiguratieinmeldoptieskmar');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerInmeldoptieskmar');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfigureerInmeldoptiesAmbulance');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerInmeldoptiesAmbulance');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfigureerInmeldoptiesPolitie');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerInmeldoptiesPolitie');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var openPopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('openConfigureerAanvullendeAfdelingen');
+                                var closePopupBtnConfigureerAanvullendeAfdelingen = document.getElementById('closePopupBtn');
+                                var popupConfigureerAanvullendeAfdelingen = document.getElementById('popupConfigureerAanvullendeAfdelingen');
+
+                                openPopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'block';
+                                });
+
+                                closePopupBtnConfigureerAanvullendeAfdelingen.addEventListener('click', function() {
+                                    popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                });
+
+                                window.addEventListener('click', function(event) {
+                                    if (event.target == popupConfigureerAanvullendeAfdelingen) {
+                                        popupConfigureerAanvullendeAfdelingen.style.display = 'none';
+                                    }
+                                });
+                            });
+                        </script>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie inmeldopties politie</h4>
+                            <button id="openConfigureerInmeldoptiesPolitie" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <hr style="background:red;width:100%;height:2px;border-radius:5px;margin-top:5px;margin-bottom:5px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie inmeldopties ambulance</h4>
+                            <button id="openConfigureerInmeldoptiesAmbulance" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <hr style="background:red;width:100%;height:2px;border-radius:5px;margin-top:5px;margin-bottom:5px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie inmeldopties kmar</h4>
+                            <button id="openConfiguratieinmeldoptieskmar" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <hr style="background:red;width:100%;height:2px;border-radius:5px;margin-top:5px;margin-bottom:5px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie inmeldopties brandweer</h4>
+                            <button id="openConfigureerInmeldoptiesbrandweer" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <hr style="background:red;width:100%;height:2px;border-radius:5px;margin-top:5px;margin-bottom:5px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie inmeldopties handhaving</h4>
+                            <button id="openConfigureerInmeldoptieshandhaving" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <hr style="background:red;width:100%;height:2px;border-radius:5px;margin-top:5px;margin-bottom:5px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <h4 class="label" style="color: white;">Configuratie aanvullende afdelingen</h4>
+                            <button id="openConfigureerAanvullendeAfdelingen" class="button is-success is-focused nieuw" style="margin-left: auto;">Configureer</button>
+                        </div>
+                        <div class="popup" id="popupConfigureerInmeldoptieshandhaving">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie inmeldopties Handhaving</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_handhaving");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieinmeldoptieshandhaving1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptieshandhaving1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieinmeldoptieshandhaving2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptieshandhavinge2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup" id="popupConfigureerInmeldoptiesbrandweer">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie inmeldopties brandweer</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_brandweer");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieinmeldoptiesbrandweer1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiesbrandweer1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieinmeldoptiesbrandweer2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiesbrandweer2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup" id="popupConfigureerInmeldoptieskmar">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie inmeldopties koninklijke marechaussee</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_kmar");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieinmeldoptieskmar1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptieskmar1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieinmeldoptieskmar2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptieskmar2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup" id="popupConfigureerInmeldoptiesAmbulance">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie inmeldopties ambulance</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_ambulance");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieinmeldoptiesambulance1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiesambulance1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieinmeldoptiesambulance2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiesambulance2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup" id="popupConfigureerInmeldoptiesPolitie">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie inmeldopties politie</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_politie");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieinmeldoptiespolitie1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiespolitie1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieinmeldoptiespolitie2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieinmeldoptiespolitie2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="popup" id="popupConfigureerAanvullendeAfdelingen">
+                            <div class="popup-content dark-mode-variables"    style="border-radius: 10px;">
+                                <span class="close" id="closePopupBtn">&times;</span>
+                                <table style="width:100%">
+                                    <h1 class="label" style="color: white;text-align: left;font-weight: 650;">Configuratie aanvullende afdelingen</h1>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="ibox-content">
+                                                    <h3 style="text-align:center"></h3>
+                                                    <div class="col-sm-6">
+                                                        <div class="box">
+                                                            <div class="box-body">
+                                                                <div id="form-container">
+                                                                    <table style="width:100%">
+                                                                        <tr>
+                                                                            <th style="width:50%">Waarde</th>
+                                                                            <th style="width:25%">Pas aan</th>
+                                                                            <th style="width:25%">Verwijder</th>
+                                                                        </tr>
+                                                                    </table>
+                                                                    <table style="width:100%" id="specialisaties-table">
+                                                                        <?php
+                                                                        $getSpecialisaties = $db->query("SELECT * FROM gms_eenheden_aanvullend");
+                                                                        while ($fetchSpecialisaties = $getSpecialisaties->fetch_assoc()) { ?>
+                                                                            <tr>
+                                                                                <form id="bewerkConfiguratieSpecialisatie1_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:50%'><input type='text' name='specialisatienaam' value="<?= $fetchSpecialisaties["naam"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieSpecialisatie1" value="Pas aan"></td>
+                                                                                </form>
+                                                                                <form id="bewerkConfiguratieSpecialisatie2_<?= $fetchSpecialisaties["id"] ?>" class="bewerkConfiguratieSpecialisatieForm" method="POST">
+                                                                                    <td style='display:none'><input type='text' name='id' style='display:none' value="<?= $fetchSpecialisaties["id"] ?>"></td>
+                                                                                    <td style='width:25%'><input class='button is-success is-focused nieuw edit-button' type="submit" name="bewerkConfiguratieSpecialisatie2" value="Verwijder"></td>
+                                                                                </form>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </table>
+                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                        <table style="width:100%">
+                                                                            <tr>
+                                                                                <td style='display:none'></td>
+                                                                                <td><input type='text' name='column1' placeholder="Nieuwe aanvulling"></td>
+                                                                                <td><input type="submit" value="Voeg toe"></td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </td>

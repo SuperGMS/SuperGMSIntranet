@@ -2,8 +2,8 @@
 if ($teamleider != 1) {
     echo 'Geen toegang!';
 } else {
-    ?>
-<style>
+?>
+    <style>
         .selectnieuwe {
             -webkit-font-smoothing: antialiased;
             text-size-adjust: 100%;
@@ -220,9 +220,9 @@ if ($teamleider != 1) {
         }
     </style>
     <h1>Leermiddelen</h1>
-    
+
     <?= $informatienognietafgemaakt ?>
-    
+
     <div class="recent-orders">
         <table class="table">
             <tr>
@@ -259,7 +259,7 @@ if ($teamleider != 1) {
                 <form action="" method="post">
                     <td>#</td>
                     <td><input type="text" name="title" placeholder="Politie handboek" class="form-control selectnieuwe"></td>
-                    <td><input type="text" name="url" placeholder="https://politie.nl" class="form-control selectnieuwe"></td>
+                    <td><input type="text" name="url" placeholder="politie.nl (ZONDER https:// of http:// !)" class="form-control selectnieuwe"></td>
                     <td>
                         <select name="afdeling" class="form-control selectnieuwe">
                             <option value="Politie">Politie</option>
@@ -282,7 +282,7 @@ if ($teamleider != 1) {
             while ($fetchLeermiddelen = $getAgenda->fetch_array()) {
                 $getUsername = $db->query("SELECT username, id FROM users WHERE id = '" . $fetchLeermiddelen['by_uid'] . "'");
                 $fetchUsername = $getUsername->fetch_assoc();
-                ?>
+            ?>
                 <tr class="success">
                     <td>
                         <h6>
@@ -311,16 +311,16 @@ if ($teamleider != 1) {
                         if (isset($_POST['delTime'])) {
                             $id = $db->real_escape_string($_POST['id']);
                             $db->query("DELETE FROM downloads WHERE id = '" . $id . "'");
-                            ?>
+                        ?>
                             <script>
                                 location.href = '<?php echo $site; ?>/teamleider/leermiddelen';
                             </script>
                         <?php } ?>
                         <form action="" method="post">
                             <input type="text" name="id" style="display:none;" value="<?php echo $fetchLeermiddelen['id']; ?>">
-                            <input type="submit"
-                                style="background: url(https://supergms.nl/assets/img/Delete.png);border: 0;display: block;height: 16px;width: 16px;"
-                                value="" name="delTime" style="float:right;">
+                            <button name="delTime" type="submit" class="delTime-btn" style="float:right; background-color: transparent; border: none;">
+                                <img src="https://cdn-icons-png.flaticon.com/512/9247/9247384.png" style="height:50px;">
+                            </button>
                         </form>
                     </td>
                 </tr>

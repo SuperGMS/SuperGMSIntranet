@@ -977,7 +977,9 @@ if ($leiding != 1) {
                         <td style="width:30%">
                             <form action="" method="post">
                                 <input type="text" name="id" style="display:none;" value="<?php echo $id; ?>">
-                                <input type="submit" style="background: url(https://supergms.nl/assets/img/Delete.png);border: 0;display: block;height: 15px;width: 10px;" value="" name="delTime" style="float:right;">
+                                <button name="delTime" type="submit" class="delTime-btn" style="float:right; background-color: transparent; border: none;">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/9247/9247384.png" style="height:50px;">
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -986,7 +988,7 @@ if ($leiding != 1) {
         </table>
     </div>
 
-   
+
     <?php
     if (isset($_POST['delTime'])) {
         $id = $db->real_escape_string($_POST['id']);

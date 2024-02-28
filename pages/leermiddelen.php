@@ -33,7 +33,7 @@ if ($userFetch['opgesprek'] == '1') {
                         <h4><?php echo $fetchUsername['username']; ?></h4>
                     </td>
                     <td>
-                        <a href="<?php echo $fetchLeermiddelen['url'] ?>">
+                        <a href="https://<?php echo $fetchLeermiddelen['url'] ?>">
                             <h4><?php echo $fetchLeermiddelen['title']; ?></h4>
                         </a>
                     </td>

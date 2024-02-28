@@ -45,7 +45,42 @@ if ($userFetch['opgesprek'] == '1') {
     main table tbody tr td:first-child {
         display: table-cell;
     }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        padding: 12px 16px;
+        z-index: 1;
+    }
+
+    .show {
+        display: block;
+        color:black;
+    }
 </style>
+
+<script>
+    function toggleDropdown() {
+        var dropdown = document.getElementById("dropdown");
+        dropdown.classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+        if (!event.target.matches('#avatar')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>
 
 <body class="dark-mode-variables">
 
@@ -187,7 +222,22 @@ if ($userFetch['opgesprek'] == '1') {
                         <small class="text-muted"><?= $userFetch['eenheid'] ?></small>
                     </div>
                     <div class="profile-photo">
-                        <img src="<?= $userFetch['avatar'] ?>">
+                        <img src="<?= $userFetch['avatar'] ?>" id="avatar" onclick="toggleDropdown()">
+                        <div id="dropdown" class="dropdown-content" style="transform: translate(-6.5vw, 3vh);border-radius:10px;">
+                            <h5 class="dropdown-header" style="text-align:center;">
+                                <?= $userFetch['naam'] . ' ' . $userFetch['achternaam']; ?>
+                            </h5>
+                            <h5 class="dropdown-header" style="text-align:center;">
+                                <?= $userFetch['eenheid']; ?>
+                            </h5>
+                            <hr style="height:2px;width:100%;background:red;margin-top:2px;margin-bottom:2px;">
+                            <a href="<?= $site ?>/instellingen">
+                            <h5 class="dropdown-header" style="text-align:center;color:black;">
+                                Instellingen
+                            </h5>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
 
@@ -659,6 +709,181 @@ if ($userFetch['opgesprek'] == '1') {
         });
     });
     $("#voegConfiguratieSpecialisatie").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegConfiguratieinmeldoptieshandhaving").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegConfigureerInmeldoptiesPolitie").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegConfigureerInmeldoptiesAmbulance").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegConfigureerInmeldoptieskmar").submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+
+        // Set the value of the 'cleanup' parameter
+        var formData = $(this).serialize();
+        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+
+        // Send an AJAX request to the server
+        $.ajax({
+            url: "<?= $site; ?>/includes/post_requests.php",
+            type: "POST",
+            data: formData,
+            dataType: "json", // Specify the expected data type as JSON
+            success: function(response) {
+                // Check if the response is not empty
+                if (response && Object.keys(response).length > 0) {
+                    // Handle the response from the server
+                    console.log("Form submitted successfully:", response);
+                    if (response.success) {
+                        // Show toastr success notification
+                        toastr.success(response.message);
+                    } else {
+                        // Show toastr error notification
+                        toastr.error(response.message);
+                    }
+                } else {
+                    console.log("Empty response received");
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle any errors that occurred during the request
+                console.error("An error occurred while submitting the form:", error);
+            },
+        });
+    });
+    $("#voegConfigureerInmeldoptiesbrandweer").submit(function(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
         // Set the value of the 'cleanup' parameter

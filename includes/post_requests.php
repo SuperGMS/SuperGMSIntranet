@@ -193,7 +193,9 @@ if (isset($_POST["bewerkConfiguratieSpecialisatie1"])) {
     $specialisatienaam = $_POST['specialisatienaam'];
     $ID = $_POST['id'];
 
-    $query = $db->query("UPDATE gms_eenheden_aanvullend SET naam='" . $specialisatienaam . "', value='" . $specialisatienaam . "' WHERE id='" . $ID . "'");
+    $query = $db->prepare("UPDATE gms_eenheden_aanvullend SET naam=?, value=? WHERE id=?");
+    $query->bind_param("ssi", $specialisatienaam, $specialisatienaam, $ID);
+    $query->execute();
     if ($query) {
         $response['success'] = true;
         $response['message'] = 'Waarde succesvol aangepast';
@@ -210,6 +212,71 @@ if (isset($_POST["voegConfiguratieSpecialisatie"])) {
     } else {
         $response['success'] = false;
         $response['message'] = 'Aanvullende afdeling niet succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["voegConfiguratieinmeldoptieshandhaving"])) {
+    $column1 = $_POST['column1'];
+
+    $query = $db->query("INSERT INTO gms_eenheden_handhaving (naam,value) VALUES ('$column1','$column1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Inmeldoptie handhaving succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Inmeldoptie handhaving niet succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["voegConfigureerInmeldoptiesPolitie"])) {
+    $column1 = $_POST['column1'];
+
+    $query = $db->query("INSERT INTO gms_eenheden_politie (naam,value) VALUES ('$column1','$column1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Inmeldoptie politie succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Inmeldoptie politie niet succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["voegConfigureerInmeldoptiesAmbulance"])) {
+    $column1 = $_POST['column1'];
+
+    $query = $db->query("INSERT INTO gms_eenheden_ambulance (naam,value) VALUES ('$column1','$column1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Inmeldoptie ambulance succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Inmeldoptie ambulance niet succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["voegConfigureerInmeldoptieskmar"])) {
+    $column1 = $_POST['column1'];
+
+    $query = $db->query("INSERT INTO gms_eenheden_kmar (naam,value) VALUES ('$column1','$column1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Inmeldoptie kmar succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Inmeldoptie kmar niet succesvol toegevoegd';
+    }
+}
+
+if (isset($_POST["voegConfigureerInmeldoptiesbrandweer"])) {
+    $column1 = $_POST['column1'];
+
+    $query = $db->query("INSERT INTO gms_eenheden_brandweer (naam,value) VALUES ('$column1','$column1')");
+    if ($query) {
+        $response['success'] = true;
+        $response['message'] = 'Inmeldoptie brandweer succesvol toegevoegd';
+    } else {
+        $response['success'] = false;
+        $response['message'] = 'Inmeldoptie brandweer niet succesvol toegevoegd';
     }
 }
 
@@ -291,21 +358,28 @@ if (isset($_POST["BewerkGebruiker"])) {
 
     $id = $db->real_escape_string($_POST['id']);
 
-    $query = $db->query("UPDATE users SET 
-    naam='" . $naam . "',
-    achternaam='" . $achternaam . "',
-    leeftijd='" . $leeftijd . "',
-    geboortedatum='" . $geboortedatum . "',
-    email='" . $email . "',
-    telefoon='" . $telefoon . "',
-    eenheid='" . $eenheid . "',
-    roepnummer='" . $roepnummer . "',
-    reserve_centralist='" . $reserve_centralist . "',
-    status='" . $status . "',
-    specialisatie='" . $specialisatie . "',
-    ingewerkt='" . $ingewerkt . "',
-    porto='" . $porto . "',
-    opgesprek='" . $opgesprek . "' WHERE id='" . $id . "'");
+    $query = $db->prepare("UPDATE users SET 
+    naam=?,
+    achternaam=?,
+    leeftijd=?,
+    geboortedatum=?,
+    email=?,
+    telefoon=?,
+    eenheid=?,
+    roepnummer=?,
+    reserve_centralist=?,
+    status=?,
+    specialisatie=?,
+    ingewerkt=?,
+    porto=?,
+    opgesprek=?
+    WHERE id=?");
+
+    // Bind the sanitized input values to the prepared statement
+    $query->bind_param("ssisssssssssssi", $naam, $achternaam, $leeftijd, $geboortedatum, $email, $telefoon, $eenheid, $roepnummer, $reserve_centralist, $status, $specialisatie, $ingewerkt, $porto, $opgesprek, $id);
+
+    // Execute the prepared statement
+    $query->execute();
 
     if ($query) {
         $response['success'] = true;

@@ -3,10 +3,12 @@ if ($leiding != 1) {
     echo 'Geen toegang!';
 } else {
     if (isset($_GET['id'])) {
-        $aanmeldingQ = $db->query("SELECT * FROM aanmeldingen WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-        $aanmeldingF = $aanmeldingQ->fetch_assoc();
-
         $id = $db->real_escape_string($_GET['id']);
+        $aanmeldingQ = $db->prepare("SELECT * FROM aanmeldingen WHERE id = ?");
+        $aanmeldingQ->bind_param("s", $id);
+        $aanmeldingQ->execute();
+        $result = $aanmeldingQ->get_result();
+        $aanmeldingF = $result->fetch_assoc();
         $naam = $db->real_escape_string($_POST['naam']);
         $achternaam = $db->real_escape_string($_POST['achternaam']);
         $leeftijd = $db->real_escape_string($_POST['leeftijd']);
@@ -21,8 +23,11 @@ if ($leiding != 1) {
         $password = crypt($_POST['password'], $salt);
 
         if (isset($_POST['wijzigen'])) {
-            $query = $db->query("UPDATE aanmeldingen SET naam='" . $naam . "', achternaam='" . $achternaam . "', leeftijd='" . $leeftijd . "', geboortedatum='" . $geboortedatum . "', email='" . $email . "', telefoon='" . $telefoon . "', whatsappgroep='" . $whatsappgroep . "' WHERE id='" . $aanmeldingF['id'] . "'");
-            if ($query) { ?>
+            $query = $db->prepare("UPDATE aanmeldingen SET naam=?, achternaam=?, leeftijd=?, geboortedatum=?, email=?, telefoon=?, whatsappgroep=? WHERE id=?");
+
+            $query->bind_param("ssissssi", $naam, $achternaam, $leeftijd, $geboortedatum, $email, $telefoon, $whatsappgroep, $aanmeldingF['id']);
+            
+            $query->execute();            if ($query) { ?>
                 <script>
                     toastr.success('Succesvol geupdated!', 'Succes');
                 </script>

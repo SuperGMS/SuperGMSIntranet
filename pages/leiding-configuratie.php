@@ -1158,7 +1158,7 @@ if ($leiding != 1) {
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </table>
-                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                    <form id="voegConfiguratieinmeldoptieshandhaving">
                                                                         <table style="width:100%">
                                                                             <tr>
                                                                                 <td style='display:none'></td>
@@ -1216,7 +1216,7 @@ if ($leiding != 1) {
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </table>
-                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                    <form id="voegConfigureerInmeldoptiesbrandweer">
                                                                         <table style="width:100%">
                                                                             <tr>
                                                                                 <td style='display:none'></td>
@@ -1274,7 +1274,7 @@ if ($leiding != 1) {
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </table>
-                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                    <form id="voegConfigureerInmeldoptieskmar">
                                                                         <table style="width:100%">
                                                                             <tr>
                                                                                 <td style='display:none'></td>
@@ -1332,7 +1332,7 @@ if ($leiding != 1) {
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </table>
-                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                    <form id="voegConfigureerInmeldoptiesAmbulance">
                                                                         <table style="width:100%">
                                                                             <tr>
                                                                                 <td style='display:none'></td>
@@ -1390,7 +1390,7 @@ if ($leiding != 1) {
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </table>
-                                                                    <form id="voegConfiguratieSpecialisatie">
+                                                                    <form id="voegConfigureerInmeldoptiesPolitie">
                                                                         <table style="width:100%">
                                                                             <tr>
                                                                                 <td style='display:none'></td>

@@ -199,7 +199,7 @@ if ($userFetch['opgesprek'] == '1') {
 		while ($nieuwLid = $getNieuweLeden->fetch_array()) { ?>
 			<div class="user">
 				<img src="<?= $nieuwLid['avatar'] ?>">
-				<h2><?= $nieuwLid['username'] ?></h2>
+				<h2><?= $nieuwLid['naam'] ?> <?= substr($nieuwLid['achternaam'], 0, 1); ?>.</h2>
 				<p><?= $nieuwLid['eenheid'] ?></p>
 			</div>
 		<?php } ?>

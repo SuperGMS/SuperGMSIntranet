@@ -748,7 +748,7 @@ if ($userFetch['opgesprek'] == '1') {
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&voegConfiguratieinmeldoptieshandhaving"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({
@@ -783,7 +783,7 @@ if ($userFetch['opgesprek'] == '1') {
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&voegConfigureerInmeldoptiesPolitie"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({
@@ -818,7 +818,7 @@ if ($userFetch['opgesprek'] == '1') {
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&voegConfigureerInmeldoptiesAmbulance"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({
@@ -853,7 +853,7 @@ if ($userFetch['opgesprek'] == '1') {
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&voegConfigureerInmeldoptieskmar"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({
@@ -888,7 +888,7 @@ if ($userFetch['opgesprek'] == '1') {
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&voegConfigureerInmeldoptiesbrandweer"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({

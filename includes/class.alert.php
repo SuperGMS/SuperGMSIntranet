@@ -6,7 +6,7 @@ if(isset($_SESSION['email'])){
 include_once("class.database.php");
 
 $getAlert = $db->query("SELECT * FROM alerts WHERE gelezen = '0' AND uid = '".$userFetch['id']."'");
-while($fetchAlert = $getAlert->fetch_array()){
+while($fetchAlert = $getAlert->fetch(PDO::FETCH_ASSOC)){
     
     if($fetchAlert['type'] == 1){
         ?><script>window.onload = function () { swal("<?php echo $fetchAlert['title']; ?>", "<?php echo $fetchAlert['bericht']; ?>"); };</script><?php

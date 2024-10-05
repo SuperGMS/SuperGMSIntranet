@@ -814,19 +814,58 @@
 
 <h1>Aanvragen</h1>
 
-<?= $informatienognietafgemaakt ?>
+<?php
+// Ensure errors are reported but not displayed to users in production
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+// Prevent SQL Injection and sanitize user input
+$userId = $userFetch['id'];
+
+// Prepare and execute queries securely
+$getIngeplandPlanned = $db->prepare("SELECT * FROM formtraining WHERE (stat = '0' OR stat = '1') AND uid = ? ORDER BY id ASC");
+$getIngeplandPlanned->execute([$userId]);
+$plannedTrainings = $getIngeplandPlanned->fetchAll(PDO::FETCH_ASSOC);
+
+$getIngeplandCompleted = $db->prepare("SELECT * FROM formtraining WHERE (stat = '2' OR stat = '3' OR stat = '4') AND uid = ? ORDER BY id ASC");
+$getIngeplandCompleted->execute([$userId]);
+$completedTrainings = $getIngeplandCompleted->fetchAll(PDO::FETCH_ASSOC);
+
+// Function to get training type names
+function getTrainingName($code)
+{
+    $names = [
+        "1" => "Inwerktraining",
+        "2" => "Verdiepingstraining",
+        "3" => "Specialisatietraining",
+        "4" => "Vuurwapentraining",
+        "5" => "Examen"
+    ];
+    return $names[$code] ?? "Onbekend";
+}
+
+// Function to get status names
+function getStatusName($code)
+{
+    $statuses = [
+        "0" => "Onbehandeld",
+        "1" => "Ingepland",
+        "2" => "Voltooid",
+        "3" => "Afgezegd",
+        "4" => "Geweigerd"
+    ];
+    return $statuses[$code] ?? "Onbekend";
+}
+?>
+
+<?= htmlspecialchars($informatienognietafgemaakt ?? '') ?>
 
 <div class="recent-orders">
-    <h2></h2>
     <table style="margin-right:1rem;">
         <thead>
             <tr>
                 <th>
-                    <h2>Ingepland</h2>
-                </th>
-            </tr>
-            <tr>
-                <th>
+                    <h2>Afgerond</h2>
                 </th>
             </tr>
             <tr>
@@ -834,48 +873,22 @@
                 <th style="width:24.375%">Datum</th>
                 <th style="width:24.375%">Instructeur</th>
                 <th style="width:24.375%">Status</th>
-
+            </tr>
             <tr>
-                <th colspan="5">
+                <th colspan="4">
                     <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
                 </th>
             </tr>
-
-            </tr>
         </thead>
         <tbody>
-            <?php
-            $getIngepland = $db->query("SELECT * FROM formtraining WHERE stat = '0' and uid = '" . $userFetch['id'] . "' OR stat = '1' and uid = '" . $userFetch['id'] . "' ORDER BY id ASC");
-            while ($fetchIngepland = $getIngepland->fetch_array()) {
-            ?>
+            <?php foreach ($plannedTrainings as $training): ?>
                 <tr>
-                    <td>
-                        <?php if ($fetchIngepland['training'] == "1") {
-                            echo "Inwerktraining";
-                        }
-                        if ($fetchIngepland['training'] == "2") {
-                            echo "Verdiepingstraining";
-                        }
-                        if ($fetchIngepland['training'] == "3") {
-                            echo "Specialisatietraining";
-                        }
-                        if ($fetchIngepland['training'] == "4") {
-                            echo "Vuurwapentraining";
-                        }
-                        if ($fetchIngepland['training'] == "5") {
-                            echo "Examen";
-                        }
-                        ?>
-                    </td>
-                    <td><?= $fetchIngepland['date'] ?></td>
-                    <td><?= $fetchIngepland['Instructeur'] ?></td>
-                    <td><?php if ($fetchIngepland['stat'] == "0") {
-                            echo "Onbehandeld";
-                        } elseif ($fetchIngepland['stat'] == "1") {
-                            echo "Ingepland";
-                        } ?></td>
+                    <td><?= htmlspecialchars(getTrainingName($training['training'])) ?></td>
+                    <td><?= htmlspecialchars($training['date']) ?></td>
+                    <td><?= htmlspecialchars($training['Instructeur']) ?></td>
+                    <td><?= htmlspecialchars(getStatusName($training['stat'])) ?></td>
                 </tr>
-            <?php } ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
     <div style="width:35%;float:right">
@@ -1003,42 +1016,14 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-            $getIngepland = $db->query("SELECT * FROM formtraining WHERE stat = '2' and uid = '" . $userFetch['id'] . "' OR stat = '3' and uid = '" . $userFetch['id'] . "' OR stat = '4' and uid = '" . $userFetch['id'] . "' ORDER BY id ASC");
-            while ($fetchIngepland = $getIngepland->fetch_array()) {
-            ?>
+            <?php foreach ($completedTrainings as $training): ?>
                 <tr>
-                    <td>
-                        <?php if ($fetchIngepland['training'] == "1") {
-                            echo "Inwerktraining";
-                        }
-                        if ($fetchIngepland['training'] == "2") {
-                            echo "Verdiepingstraining";
-                        }
-                        if ($fetchIngepland['training'] == "3") {
-                            echo "Specialisatietraining";
-                        }
-                        if ($fetchIngepland['training'] == "4") {
-                            echo "Vuurwapentraining";
-                        }
-                        if ($fetchIngepland['training'] == "5") {
-                            echo "Examen";
-                        }
-                        ?>
-                    </td>
-                    <td><?= $fetchIngepland['date'] ?></td>
-                    <td><?= $fetchIngepland['Instructeur'] ?></td>
-                    <td>
-                        <?php if ($fetchIngepland['stat'] == "4") {
-                            echo "Geweigerd";
-                        } else if ($fetchIngepland['stat'] == "3") {
-                            echo "Afgezegd";
-                        } elseif ($fetchIngepland['stat'] == "2") {
-                            echo "Voltooid";
-                        } ?>
-                    </td>
+                    <td><?= htmlspecialchars(getTrainingName($training['training'])) ?></td>
+                    <td><?= htmlspecialchars($training['date']) ?></td>
+                    <td><?= htmlspecialchars($training['Instructeur']) ?></td>
+                    <td><?= htmlspecialchars(getStatusName($training['stat'])) ?></td>
                 </tr>
-            <?php } ?>
+            <?php endforeach; ?>
         </tbody>
     </table>
 </div>

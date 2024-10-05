@@ -4,7 +4,8 @@ if ($leiding != 1) {
 } else {
 ?>
 
-    <style>
+ 
+ <style>
         main .recent-orders table {
             text-align: left;
             width: 52.5%;
@@ -827,7 +828,7 @@ if ($leiding != 1) {
     </script>
     <h1>Alle add-ons</h1>
 
-    <?= $informatienognietafgemaakt ?>
+    <?= htmlspecialchars($informatienognietafgemaakt ?? '') ?>
 
     <div class="recent-orders">
         <form id="wijzigAddons" method="POST">

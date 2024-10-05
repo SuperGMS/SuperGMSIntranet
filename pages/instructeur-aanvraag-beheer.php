@@ -2,20 +2,30 @@
 if ($instructeur != 1) {
     echo 'Geen toegang!';
 } else {
-?>
+    // Use prepared statements for security
+    $stmt = $db->prepare("SELECT * FROM formtraining WHERE id = :id");
+    $stmt->execute(['id' => $_GET['id']]);
+    $fetchAanvraag = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    <?php
-    $getAanvraag = $db->query("SELECT * FROM formtraining WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-    $fetchAanvraag = $getAanvraag->fetch_array();
-    $getUser = $db->query("SELECT username, id FROM users WHERE id = '" . $fetchAanvraag['uid'] . "'");
-    $getAfdeling = $db->query("SELECT eenheid, id FROM users WHERE id = '" . $fetchAanvraag['uid'] . "'");
-    $fetchUsername = $getUser->fetch_assoc();
-    $fetchAfdeling = $getAfdeling->fetch_assoc();
-    $getConfigNaam = $db->query("SELECT Naam, id FROM Configuratie_aanvragen WHERE id = '" . $fetchAanvraag['training'] . "'");
-    $fetchConfigNaam = $getConfigNaam->fetch_assoc();
+    // Fetch user details
+    $stmtUser = $db->prepare("SELECT username, id FROM users WHERE id = :uid");
+    $stmtUser->execute(['uid' => $fetchAanvraag['uid']]);
+    $fetchUsername = $stmtUser->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch afdeling details
+    $stmtAfdeling = $db->prepare("SELECT eenheid, id FROM users WHERE id = :uid");
+    $stmtAfdeling->execute(['uid' => $fetchAanvraag['uid']]);
+    $fetchAfdeling = $stmtAfdeling->fetch(PDO::FETCH_ASSOC);
+
+    // Fetch configuration name
+    $stmtConfigNaam = $db->prepare("SELECT Naam, id FROM Configuratie_aanvragen WHERE id = :training");
+    $stmtConfigNaam->execute(['training' => $fetchAanvraag['training']]);
+    $fetchConfigNaam = $stmtConfigNaam->fetch(PDO::FETCH_ASSOC);
     ?>
 
-    <style>
+    
+
+<style>
         main .recent-orders table {
             text-align: left;
             width: 52.5%;
@@ -829,14 +839,13 @@ if ($instructeur != 1) {
         }
     </style>
 
-    <h1>Aanvraag van <?php echo $fetchUsername['username']; ?> | ID: <?= $_GET['id'] ?></h1>
-
-    <?= $informatienognietafgemaakt ?>
+    <h1>Aanvraag van <?php echo htmlspecialchars($fetchUsername['username']); ?> | ID: <?= htmlspecialchars($_GET['id']) ?></h1>
 
     <div class="recent-orders">
         <?php
-        $getIngepland = $db->query("SELECT * FROM formtraining WHERE id = '" . $_GET['id'] . "'");
-        while ($fetchIngepland = $getIngepland->fetch_array()) {
+        $stmtIngepland = $db->prepare("SELECT * FROM formtraining WHERE id = :id");
+        $stmtIngepland->execute(['id' => $_GET['id']]);
+        while ($fetchIngepland = $stmtIngepland->fetch(PDO::FETCH_ASSOC)) {
         ?>
             <table style="margin-right:1rem;">
                 <thead>
@@ -846,8 +855,7 @@ if ($instructeur != 1) {
                         </th>
                     </tr>
                     <tr>
-                        <th>
-                        </th>
+                        <th></th>
                     </tr>
                     <tr>
                         <th style="width:24.375%">Type</th>
@@ -859,30 +867,20 @@ if ($instructeur != 1) {
                 <tbody>
                     <tr>
                         <td>
-                            <?php if ($fetchIngepland['training'] == "1") {
-                                echo "Inwerktraining";
-                            }
-                            if ($fetchIngepland['training'] == "2") {
-                                echo "Verdiepingstraining";
-                            }
-                            if ($fetchIngepland['training'] == "3") {
-                                echo "Specialisatietraining";
-                            }
-                            if ($fetchIngepland['training'] == "4") {
-                                echo "Vuurwapentraining";
-                            }
-                            if ($fetchIngepland['training'] == "5") {
-                                echo "Examen";
-                            }
+                            <?php
+                            $trainingTypes = [
+                                "1" => "Inwerktraining",
+                                "2" => "Verdiepingstraining",
+                                "3" => "Specialisatietraining",
+                                "4" => "Vuurwapentraining",
+                                "5" => "Examen"
+                            ];
+                            echo $trainingTypes[$fetchIngepland['training']] ?? "Onbekend";
                             ?>
                         </td>
-                        <td><?= $fetchIngepland['date'] ?></td>
-                        <td><?= $fetchIngepland['Instructeur'] ?></td>
-                        <td><?php if ($fetchIngepland['stat'] != "1") {
-                                echo "Onbehandeld";
-                            } else {
-                                echo "Ingepland";
-                            } ?></td>
+                        <td><?= htmlspecialchars($fetchIngepland['date']) ?></td>
+                        <td><?= htmlspecialchars($fetchIngepland['Instructeur']) ?></td>
+                        <td><?= $fetchIngepland['stat'] != "1" ? "Onbehandeld" : "Ingepland" ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -903,19 +901,15 @@ if ($instructeur != 1) {
                                         <label class="label" style="color: white;">Naam instructeur</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td colspan="2">
                                         <div class="control">
-                                            <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" readonly="">
-                                            <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                                            <input class="selectnieuwe" name="id" type="text" value="<?= $_GET['id'] ?>" style="display:none" readonly="">
+                                            <input class="selectnieuwe" name="naam" type="text" value="<?= htmlspecialchars($userFetch['naam'] . ' ' . $userFetch['achternaam']) ?>" readonly="">
+                                            <input class="selectnieuwe" name="naamid" type="text" value="<?= htmlspecialchars($userFetch['id']) ?>" style="display:none" readonly="">
+                                            <input class="selectnieuwe" name="id" type="text" value="<?= htmlspecialchars($_GET['id']) ?>" style="display:none" readonly="">
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <label class="label" style="color: white;">Afdeling instructeur</label>
@@ -924,40 +918,23 @@ if ($instructeur != 1) {
                                         <label class="label" style="color: white;">Type training</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td style="width:50%">
-                                        <div class="control" colspan="1">
-                                            <input class="selectnieuwe" type="text" name="afdeling" value="<?= $userFetch['eenheid'] ?>" readonly="">
+                                        <div class="control">
+                                            <input class="selectnieuwe" type="text" name="afdeling" value="<?= htmlspecialchars($userFetch['eenheid']) ?>" readonly="">
                                         </div>
                                     </td>
                                     <td style="width:50%">
-                                        <div class="control" colspan="1">
-
-                                            <input class="selectnieuwe" type="text" name="type" style="width:100%" value="<?php if ($fetchAanvraag['training'] == "1") {
-                                                                                                                                echo "Inwerktraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "2") {
-                                                                                                                                echo "Verdiepingstraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "3") {
-                                                                                                                                echo "Specialisatietraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "4") {
-                                                                                                                                echo "Vuurwapentraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "5") {
-                                                                                                                                echo "Examen";
-                                                                                                                            } ?>" readonly="">
+                                        <div class="control">
+                                            <input class="selectnieuwe" type="text" name="type" style="width:100%" value="<?= htmlspecialchars($trainingTypes[$fetchAanvraag['training']] ?? "Onbekend") ?>" readonly="">
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <label class="label" style="color: white;">Wanneer is de training?</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td colspan="2">
                                         <div class="control">
@@ -965,29 +942,21 @@ if ($instructeur != 1) {
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <div class="control">
                                             <input type="submit" name="postTraining2" class="button is-success is-focused nieuw" value="Bevestigen">
                                         </div>
                                     </td>
-                        </form>
-                        <form id="postTrainingid3" method="POST">
-                            <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" style="display:none" readonly="">
-                            <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                            <input class="selectnieuwe" name="id" type="text" value="<?= $_GET['id'] ?>" style="display:none" readonly="">
-                            <td>
-                                <div class="control">
-                                    <input type="submit" name="postTraining3" class="button is-danger is-focused nieuw" value="Afwijzen" style="background-color: var(--van-danger-color);border-color: var(--van-danger-color)">
-                                </div>
-                            </td>
-                            </tr>
+                                    <td>
+                                        <div class="control">
+                                            <input type="submit" name="postTraining3" class="button is-danger is-focused nieuw" value="Afwijzen" style="background-color: var(--van-danger-color);border-color: var(--van-danger-color)">
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </form>
                     </table>
-
                 <?php } else { ?>
                     <table style="width: 130%;float: right;position: relative;left: 5%;">
                         <form id="postTrainingid4" method="POST">
@@ -1004,19 +973,15 @@ if ($instructeur != 1) {
                                         <label class="label" style="color: white;">Naam instructeur</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td colspan="2">
                                         <div class="control">
-                                            <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" readonly="">
-                                            <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                                            <input class="selectnieuwe" name="id" type="text" value="<?= $_GET['id'] ?>" style="display:none" readonly="">
+                                            <input class="selectnieuwe" name="naam" type="text" value="<?= htmlspecialchars($userFetch['naam'] . ' ' . $userFetch['achternaam']) ?>" readonly="">
+                                            <input class="selectnieuwe" name="naamid" type="text" value="<?= htmlspecialchars($userFetch['id']) ?>" style="display:none" readonly="">
+                                            <input class="selectnieuwe" name="id" type="text" value="<?= htmlspecialchars($_GET['id']) ?>" style="display:none" readonly="">
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <label class="label" style="color: white;">Afdeling instructeur</label>
@@ -1025,40 +990,23 @@ if ($instructeur != 1) {
                                         <label class="label" style="color: white;">Type training</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td style="width:50%">
-                                        <div class="control" colspan="1">
-                                            <input class="selectnieuwe" type="text" name="afdeling" value="<?= $userFetch['eenheid'] ?>" readonly="">
+                                        <div class="control">
+                                            <input class="selectnieuwe" type="text" name="afdeling" value="<?= htmlspecialchars($userFetch['eenheid']) ?>" readonly="">
                                         </div>
                                     </td>
                                     <td style="width:50%">
-                                        <div class="control" colspan="1">
-
-                                            <input class="selectnieuwe" type="text" name="type" style="width:100%" value="<?php if ($fetchAanvraag['training'] == "1") {
-                                                                                                                                echo "Inwerktraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "2") {
-                                                                                                                                echo "Verdiepingstraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "3") {
-                                                                                                                                echo "Specialisatietraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "4") {
-                                                                                                                                echo "Vuurwapentraining";
-                                                                                                                            } else if ($fetchAanvraag['training'] == "5") {
-                                                                                                                                echo "Examen";
-                                                                                                                            } ?>" readonly="">
+                                        <div class="control">
+                                            <input class="selectnieuwe" type="text" name="type" style="width:100%" value="<?= htmlspecialchars($trainingTypes[$fetchAanvraag['training']] ?? "Onbekend") ?>" readonly="">
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <label class="label" style="color: white;">Wanneer is de training?</label>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td colspan="2">
                                         <div class="control">
@@ -1066,113 +1014,32 @@ if ($instructeur != 1) {
                                         </div>
                                     </td>
                                 </tr>
-                            </tbody>
-                            <tbody>
                                 <tr>
                                     <td>
                                         <div class="control">
                                             <input type="submit" name="postTraining4" class="button is-success is-focused nieuw" value="Wijzig">
                                         </div>
                                     </td>
-                        </form>
-                        <form id="postTrainingid5" method="POST">
-                            <td>
-                                <div class="control">
-                                    <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" style="display:none" readonly="">
-                                    <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                                    <input class="selectnieuwe" name="id" type="text" value="<?= $_GET['id'] ?>" style="display:none" readonly="">
-                                    <input type="submit" name="postTraining5" class="button is-success is-focused nieuw" value="Voltooien">
-                                </div>
-                            </td>
-                        </form>
-                        </tr>
-                        <tr>
-                        <form id="postTrainingid6" method="POST">
-                                <td colspan="2">
-                                    <div class="control">
-                                        <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" style="display:none" readonly="">
-                                        <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                                        <input class="selectnieuwe" name="id" type="text" value="<?= $_GET['id'] ?>" style="display:none" readonly="">
-                                        <input type="submit" name="postTraining6" class="button is-danger is-focused nieuw" value="Afzeggen" style="background-color: var(--van-danger-color);border-color: var(--van-danger-color)">
-                                    </div>
-                                </td>
-                            </form>
-                        </tr>
-                        </tbody>
+                                    <td>
+                                        <div class="control">
+                                            <input type="submit" name="postTraining5" class="button is-success is-focused nieuw" value="Voltooien">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="control">
+                                            <input type="submit" name="postTraining6" class="button is-danger is-focused nieuw" value="Afzeggen" style="background-color: var(--van-danger-color);border-color: var(--van-danger-color)">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
                         </form>
                     </table>
                 <?php } ?>
             </div>
         <?php } ?>
     </div>
-
-    <!-- <br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-    <div class="padding">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="box" style="border-radius:10px;">
-                    <div class="box-header">
-                        <h2>Aanvraag</h2>
-                        <small><?php echo $fetchAanvraag['bericht']; ?></small>
-                    </div>
-                    <table class="table" style="color:white">
-                        <tr>
-                            <th>Naam:</th>
-                            <th>Soort:</th>
-                            <th>Gewenste datum:</th>
-                            <th>Afdeling:</th>
-                        </tr>
-                        <tr>
-                            <td><?php echo $fetchUsername['username']; ?></td>
-                            <td><?php echo $fetchConfigNaam['Naam']; ?></td>
-                            <td><?php echo $fetchAanvraag['date']; ?></td>
-                            <td><?php echo $fetchAfdeling['eenheid']; ?></td>
-                        </tr>
-                    </table>
-
-                    <div class="box-divider m-a-0"></div>
-                    <div class="box-body">
-                        <form action="" method="POST">
-                            <div class="form-group">
-                                <label style="color:white">Bericht:</label>
-                                <textarea class="form-control" name="bericht" rows="5" cols="5"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label style="color:white">Definitieve datum:</label>
-                                <input type="text" value="<?php echo $fetchAanvraag['date']; ?>" name="chosendate" class="form-control">
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" value="Accepteren" class="btn btn-primary" name="AcceptTraining">
-                                <input type="submit" value="Afwijzen" class="btn btn-danger" name="Afwijzen">
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
 <?php
 }
 ?>

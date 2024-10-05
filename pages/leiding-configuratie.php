@@ -881,7 +881,7 @@ if ($leiding != 1) {
         });
     </script>
 
-    <h1>Alle configuratie opties</h1> <?= $informatienognietafgemaakt ?>
+    <h1>Alle configuratie opties</h1>
     <div class="recent-orders">
         <table style="margin-right:1rem;">
             <thead>

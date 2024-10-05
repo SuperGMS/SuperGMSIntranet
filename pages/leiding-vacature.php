@@ -825,9 +825,8 @@ if ($leiding != 1) {
             });
         });
     </script>
+    
     <h1>Aanvragen</h1>
-
-    <?= $informatienognietafgemaakt ?>
 
     <div class="recent-orders">
         <h2></h2>
@@ -847,33 +846,31 @@ if ($leiding != 1) {
                     <th style="width:30%">Door</th>
                     <th style="width:30%">Vacature</th>
                     <th style="width:30%">Datum aanvraag</th>
-
+                </tr>
                 <tr>
                     <th colspan="5">
                         <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
                     </th>
                 </tr>
-
-                </tr>
             </thead>
             <tbody>
                 <?php
-                $resultaat = $db->query("SELECT * FROM vacature_reactie ORDER BY date");
-                $countresultaat = $resultaat->num_rows;
+                $stmt = $db->query("SELECT * FROM vacature_reactie ORDER BY date");
+                while ($fetch = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $usernameStmt = $db->prepare("SELECT username FROM users WHERE id = :uid");
+                    $usernameStmt->execute(['uid' => $fetch['uid']]);
+                    $fetchU = $usernameStmt->fetch(PDO::FETCH_ASSOC);
 
-                while ($fetch = $resultaat->fetch_assoc()) {
-                    $username = $db->query("SELECT id,username FROM users WHERE id = '" . $fetch['uid'] . "'");
-                    $fetchU = $username->fetch_assoc();
-                    $id = $fetch['id'];
-                    $username = $fetchU['username'];
-                    $vacature = $fetch['vacature'];
-                    $date = $fetch['date'];
+                    $id = htmlspecialchars($fetch['id']);
+                    $username = htmlspecialchars($fetchU['username'] ?? 'Onbekend');
+                    $vacature = htmlspecialchars($fetch['vacature']);
+                    $date = htmlspecialchars($fetch['date']);
                 ?>
-                    <tr class="clickable-row" data-href="<?php echo $site; ?>/leiding/bekijk/vacature/<?php echo $id ?>">
-                        <td><?php echo $id ?></td>
-                        <td><?php echo $username ?></td>
-                        <td><?php echo $vacature ?></td>
-                        <td><?php echo $date ?></td>
+                    <tr class="clickable-row" data-href="<?= htmlspecialchars($site . '/leiding/bekijk/vacature/' . $id) ?>">
+                        <td><?= $id ?></td>
+                        <td><?= $username ?></td>
+                        <td><?= $vacature ?></td>
+                        <td><?= $date ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -894,31 +891,23 @@ if ($leiding != 1) {
                                 <label class="label" style="color: white;">Vacature naam</label>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
-                                <input class="selectnieuwe" name="vacatureNaam" type="text" placeholder="Opmerking">
+                                <input class="selectnieuwe" name="vacatureNaam" type="text" placeholder="Opmerking" required>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
                                 <label class="label" style="color: white;">Uitleg vacature</label>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
-                            <td colspan="2">
+                            <td>
                                 <div class="control">
-                                    <input class="selectnieuwe" name="Uitleg" type="text" placeholder="Opmerking">
+                                    <input class="selectnieuwe" name="Uitleg" type="text" placeholder="Opmerking" required>
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
                                 <div class="control">
@@ -956,27 +945,21 @@ if ($leiding != 1) {
             </thead>
             <tbody>
                 <?php
-                $resultaat = $db->query("SELECT * FROM vacatures ORDER BY date");
-                $countresultaat = $resultaat->num_rows;
-
-                while ($fetch = $resultaat->fetch_assoc()) {
-                    $id = $fetch['id'];
-                    $titel = $fetch['titel'];
-                    $date = $fetch['date'];
-                    $status = $fetch['status'];
+                $stmt = $db->query("SELECT * FROM vacatures ORDER BY date");
+                while ($fetch = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $id = htmlspecialchars($fetch['id']);
+                    $titel = htmlspecialchars($fetch['titel']);
+                    $date = htmlspecialchars($fetch['date']);
+                    $status = $fetch['status'] == "1" ? "Open" : "Gesloten";
                 ?>
                     <tr>
-                        <td style="width:5%"><?php echo $id ?></td>
-                        <td style="width:30%"><?php echo $titel ?></td>
-                        <td style="width:30%"><?php echo $date ?></td>
-                        <td style="width:30%"><?php if ($status == "1") {
-                                                    echo "Open";
-                                                } else {
-                                                    echo "Gesloten";
-                                                } ?></td>
+                        <td style="width:5%"><?= $id ?></td>
+                        <td style="width:30%"><?= $titel ?></td>
+                        <td style="width:30%"><?= $date ?></td>
+                        <td style="width:30%"><?= $status ?></td>
                         <td style="width:30%">
                             <form action="" method="post">
-                                <input type="text" name="id" style="display:none;" value="<?php echo $id; ?>">
+                                <input type="hidden" name="id" value="<?= $id; ?>">
                                 <button name="delTime" type="submit" class="delTime-btn" style="float:right; background-color: transparent; border: none;">
                                     <img src="https://cdn-icons-png.flaticon.com/512/9247/9247384.png" style="height:50px;">
                                 </button>
@@ -988,40 +971,32 @@ if ($leiding != 1) {
         </table>
     </div>
 
+<?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delTime'])) {
+        $id = (int)$_POST['id'];
+        $stmt = $db->prepare("DELETE FROM vacatures WHERE id = :id");
+        $stmt->execute(['id' => $id]);
 
-    <?php
-    if (isset($_POST['delTime'])) {
-        $id = $db->real_escape_string($_POST['id']);
-        $db->query("DELETE FROM vacatures WHERE id = '" . $id . "'");
-    ?>
-        <script>
-            location.href = '<?php echo $site; ?>/leiding/vacature';
-        </script>
-    <?php } ?>
-    <?php
-    if (isset($_POST['makeVacature'])) {
-        $titel = $db->real_escape_string($_POST['titel']);
-        $uitleg = $db->real_escape_string($_POST['uitleg']);
+        echo '<script>location.href = "' . htmlspecialchars($site . '/leiding/vacature') . '";</script>';
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['postCreerVacature'])) {
+        $titel = trim($_POST['vacatureNaam']);
+        $uitleg = trim($_POST['Uitleg']);
 
         if (empty($titel)) {
             echo 'Je bent vergeten een titel in te vullen';
         } elseif (empty($uitleg)) {
             echo 'Je bent vergeten een uitleg in te vullen';
         } else {
-            $query = $db->query("INSERT INTO vacatures (titel,text,date) VALUES (
-                            '" . $titel . "',
-                            '" . $uitleg . "',
-                            NOW()
-                            )");
-            if ($query) {
+            $stmt = $db->prepare("INSERT INTO vacatures (titel, text, date) VALUES (:titel, :uitleg, NOW())");
+            if ($stmt->execute(['titel' => $titel, 'uitleg' => $uitleg])) {
                 echo 'Succesvol de vacature aangemaakt!';
             } else {
                 echo 'Error bij het maken van de vacature';
             }
+            echo '<script>location.href = "' . htmlspecialchars($site . '/leiding/vacature') . '";</script>';
         }
-    ?>
-        <script>
-            location.href = '<?php echo $site; ?>/leiding/vacature';
-        </script>
-    <?php } ?>
-<?php } ?>
+    }
+}
+?>

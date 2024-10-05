@@ -1,19 +1,9 @@
-<!DOCTYPE html>
 <?php
-include("includes/class.databasefunctie.php");
-if ($userFetch['opgesprek'] == '1') {
-    if (strpos($_SERVER['REQUEST_URI'], '/loguit') === true) {
-        header('Location: ' . $site . '/loguit');
-    } else {
-        if (strpos($_SERVER['REQUEST_URI'], '/opgesprek') === false) {
-            if (strpos($_SERVER['REQUEST_URI'], '/loguit') === false) {
-                header('Location: ' . $site . '/opgesprek');
-                exit();
-            }
-        }
-    }
-}
+include("includes/class.ranks.php")
 ?>
+
+<!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -29,57 +19,57 @@ if ($userFetch['opgesprek'] == '1') {
 <link href="https://cdn.jsdelivr.net/npm/toastr@2.1.4/build/toastr.min.css" rel="stylesheet">
 
 <style>
-    aside .sidebar a.active {
-        border-radius: 15px;
-    }
+aside .sidebar a.active {
+    border-radius: 15px;
+}
 
-    .right-section .user-profile img {
-        width: 75%;
-        height: auto;
-        margin-bottom: 10px;
-        border-radius: 50%;
-        margin-left: 12.5%;
-    }
+.right-section .user-profile img {
+    width: 75%;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    margin-left: 12.5%;
+}
 
-    main table tbody tr td:last-child,
-    main table tbody tr td:first-child {
-        display: table-cell;
-    }
+main table tbody tr td:last-child,
+main table tbody tr td:first-child {
+    display: table-cell;
+}
 
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f1f1f1;
-        min-width: 160px;
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-        padding: 12px 16px;
-        z-index: 1;
-    }
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
 
-    .show {
-        display: block;
-        color:black;
-    }
+.show {
+    display: block;
+    color: black;
+}
 </style>
 
 <script>
-    function toggleDropdown() {
-        var dropdown = document.getElementById("dropdown");
-        dropdown.classList.toggle("show");
-    }
+function toggleDropdown() {
+    var dropdown = document.getElementById("dropdown");
+    dropdown.classList.toggle("show");
+}
 
-    // Close the dropdown if the user clicks outside of it
-    window.onclick = function(event) {
-        if (!event.target.matches('#avatar')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
-                }
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('#avatar')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
             }
         }
     }
+}
 </script>
 
 <body class="dark-mode-variables">
@@ -127,40 +117,40 @@ if ($userFetch['opgesprek'] == '1') {
 
 
                 <?php if ($instructeur == 1) { ?>
-                    <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
-                    <h3 style="text-align:center;margin-bottom:1rem;">Instructeur</h3>
-                    <a href="<?= $site ?>/instructeur/aanvragen" <?php if ($_GET['p'] == 'instructeur-aanvragen') {
+                <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
+                <h3 style="text-align:center;margin-bottom:1rem;">Instructeur</h3>
+                <a href="<?= $site ?>/instructeur/aanvragen" <?php if ($_GET['p'] == 'instructeur-aanvragen') {
                                                                         echo 'class="active"';
                                                                     } ?>>
-                        <span class="material-icons-sharp">
-                            assignment
-                        </span>
-                        <h3>Aanvragen</h3>
-                    </a>
+                    <span class="material-icons-sharp">
+                        assignment
+                    </span>
+                    <h3>Aanvragen</h3>
+                </a>
                 <?php } ?>
                 <?php if ($teamleider == 1) { ?>
-                    <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
-                    <h3 style="text-align:center;margin-bottom:1rem;">Teamleider</h3>
-                    <a href="<?= $site ?>/teamleider/overzicht" <?php if ($_GET['p'] == 'teamleider-overzicht') {
+                <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
+                <h3 style="text-align:center;margin-bottom:1rem;">Teamleider</h3>
+                <a href="<?= $site ?>/teamleider/overzicht" <?php if ($_GET['p'] == 'teamleider-overzicht') {
                                                                     echo 'class="active"';
                                                                 } ?>>
-                        <span class="material-icons-sharp">
-                            dashboard
-                        </span>
-                        <h3>Overzicht</h3>
-                    </a>
+                    <span class="material-icons-sharp">
+                        dashboard
+                    </span>
+                    <h3>Overzicht</h3>
+                </a>
                 <?php } ?>
                 <?php if ($leiding == 1) { ?>
-                    <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
-                    <h3 style="text-align:center;margin-bottom:1rem;">Bestuur</h3>
-                    <a href="<?= $site ?>/leiding/overzicht" <?php if ($_GET['p'] == 'leiding-overzicht') {
+                <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
+                <h3 style="text-align:center;margin-bottom:1rem;">Bestuur</h3>
+                <a href="<?= $site ?>/leiding/overzicht" <?php if ($_GET['p'] == 'leiding-overzicht') {
                                                                     echo 'class="active"';
                                                                 } ?>>
-                        <span class="material-icons-sharp">
-                            dashboard
-                        </span>
-                        <h3>Overzicht</h3>
-                    </a>
+                    <span class="material-icons-sharp">
+                        dashboard
+                    </span>
+                    <h3>Overzicht</h3>
+                </a>
                 <?php } ?>
                 <a href="<?= $site; ?>/loguit">
                     <span class="material-icons-sharp">
@@ -223,7 +213,8 @@ if ($userFetch['opgesprek'] == '1') {
                     </div>
                     <div class="profile-photo">
                         <img src="<?= $userFetch['avatar'] ?>" id="avatar" onclick="toggleDropdown()">
-                        <div id="dropdown" class="dropdown-content" style="transform: translate(-6.5vw, 3vh);border-radius:10px;">
+                        <div id="dropdown" class="dropdown-content"
+                            style="transform: translate(-6.5vw, 3vh);border-radius:10px;">
                             <h5 class="dropdown-header" style="text-align:center;">
                                 <?= $userFetch['naam'] . ' ' . $userFetch['achternaam']; ?>
                             </h5>
@@ -232,9 +223,9 @@ if ($userFetch['opgesprek'] == '1') {
                             </h5>
                             <hr style="height:2px;width:100%;background:red;margin-top:2px;margin-bottom:2px;">
                             <a href="<?= $site ?>/instellingen">
-                            <h5 class="dropdown-header" style="text-align:center;color:black;">
-                                Instellingen
-                            </h5>
+                                <h5 class="dropdown-header" style="text-align:center;color:black;">
+                                    Instellingen
+                                </h5>
                             </a>
                         </div>
 
@@ -262,43 +253,43 @@ if ($userFetch['opgesprek'] == '1') {
 
                 <?php
                 $getMail = $db->query("SELECT * FROM mailbox WHERE uid_to = '" . $userFetch['id'] . "' AND gelezen = '0' ORDER BY date DESC LIMIT 3");
-                $countMails = $getMail->num_rows;
+                $countMails = $getMail->rowCount();
                 if ($countMails == 0) {
                     echo '&nbsp; Geen nieuwe notificaties!';
                 }
-                while ($fetchMail = $getMail->fetch_array()) {
+                while ($fetchMail = $getMail->fetch(PDO::FETCH_ASSOC)) {
                     $getUserinfo = $db->query("SELECT id, username, avatar FROM users WHERE id = '" . $fetchMail['uid_from'] . "'");
-                    $getUser = $getUserinfo->fetch_assoc();
+                    $getUser = $getUserinfo->fetchAll();
                 ?>
-                    <a href="<?php echo $site; ?>/mailbox/view/<?php echo $fetchMail['id']; ?>">
-                        <div class="notification">
-                            <div class="icon">
-                                <span class="material-icons-sharp">
-                                    mark_email_unread
-                                </span>
-                            </div>
-                            <div class="content">
-                                <div class="info">
-                                    <h3>New mail by <strong>
-                                            <?php
+                <a href="<?php echo $site; ?>/mailbox/view/<?php echo $fetchMail['id']; ?>">
+                    <div class="notification">
+                        <div class="icon">
+                            <span class="material-icons-sharp">
+                                mark_email_unread
+                            </span>
+                        </div>
+                        <div class="content">
+                            <div class="info">
+                                <h3>New mail by <strong>
+                                        <?php
                                             if ($fetchMail['uid_from'] == 0) {
                                                 echo $fetchMail['name_from'];
                                             } else {
                                                 echo $getUser['username'];
                                             }
                                             ?>
-                                        </strong>
-                                    </h3>
-                                    <small class="text_muted">
-                                        <?php
+                                    </strong>
+                                </h3>
+                                <small class="text_muted">
+                                    <?php
                                         setlocale(LC_TIME, 'NL_nl');
                                         echo strftime('%e %B %Y om %H:%M', strtotime($fetchMail['date']));
                                         ?>
-                                    </small>
-                                </div>
+                                </small>
                             </div>
                         </div>
-                    </a>
+                    </div>
+                </a>
                 <?php } ?>
 
             </div>
@@ -309,83 +300,83 @@ if ($userFetch['opgesprek'] == '1') {
                 </div>
 
                 <?php if ($configuratieFetch['TeamspeakOfDiscord'] == 1) { ?>
-                    <a href="ts3server://<?= $configuratieFetch['LinkTeamspeakOfDiscord'] ?>">
-                        <div class="notification">
-                            <div class="icon">
-                                <span class="material-icons-sharp">
-                                    <img src="https://img.icons8.com/?id=108449&size=30&format=png">
-                                </span>
-                            </div>
-                            <div class="content">
-                                <div class="info">
-                                    <h3>Teamspeak server</h3>
-                                    <small class="text_muted">
-                                        Normale server
-                                    </small>
-                                </div>
+                <a href="ts3server://<?= $configuratieFetch['LinkTeamspeakOfDiscord'] ?>">
+                    <div class="notification">
+                        <div class="icon">
+                            <span class="material-icons-sharp">
+                                <img src="https://img.icons8.com/?id=108449&size=30&format=png">
+                            </span>
+                        </div>
+                        <div class="content">
+                            <div class="info">
+                                <h3>Teamspeak server</h3>
+                                <small class="text_muted">
+                                    Normale server
+                                </small>
                             </div>
                         </div>
-                    </a>
+                    </div>
+                </a>
                 <?php } else if ($configuratieFetch['TeamspeakOfDiscord'] == 0) { ?>
-                    <a href="https://discord.gg/WYF8QrYN7N">
-                        <div class="notification">
-                            <div class="icon">
-                                <span class="material-icons-sharp">
-                                    discord
-                                </span>
-                            </div>
-                            <div class="content">
-                                <div class="info">
-                                    <h3>Discord server</h3>
-                                    <small class="text_muted">
-                                        Normale server
-                                    </small>
-                                </div>
+                <a href="https://discord.gg/WYF8QrYN7N">
+                    <div class="notification">
+                        <div class="icon">
+                            <span class="material-icons-sharp">
+                                discord
+                            </span>
+                        </div>
+                        <div class="content">
+                            <div class="info">
+                                <h3>Discord server</h3>
+                                <small class="text_muted">
+                                    Normale server
+                                </small>
                             </div>
                         </div>
-                    </a>
+                    </div>
+                </a>
                 <?php } ?>
 
                 <?php if ($configuratieFetch['gebruikWhitelist'] == "1") { ?>
-                    <a href="<?= $configuratieFetch['gebruikWhitelistLink']; ?>">
+                <a href="<?= $configuratieFetch['gebruikWhitelistLink']; ?>">
+                    <div class="notification">
+                        <div class="icon">
+                            <span class="material-icons-sharp">
+                                discord
+                            </span>
+                        </div>
+                        <div class="content">
+                            <div class="info">
+                                <h3>Discord server</h3>
+                                <small class="text_muted">
+                                    Whitelist server
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <?php } ?>
+
+                <?php if ($configuratieFetch['gebruikGMS'] == "0") { ?>
+                <div id="gmsDiv">
+                    <a href="http://www.limitlesssoftware.nl/gms/">
                         <div class="notification">
                             <div class="icon">
                                 <span class="material-icons-sharp">
-                                    discord
+                                    cast
                                 </span>
                             </div>
                             <div class="content">
                                 <div class="info">
-                                    <h3>Discord server</h3>
+                                    <h3>Geïntegreerd meldkamer systeem</h3>
                                     <small class="text_muted">
-                                        Whitelist server
+                                        Druk hier om naar het systeem te gaan!
                                     </small>
                                 </div>
                             </div>
                         </div>
                     </a>
-                <?php } ?>
-
-                <?php if ($configuratieFetch['gebruikGMS'] == "0") { ?>
-                    <div id="gmsDiv">
-                        <a href="http://supergms.nl/gms/<?= $configuratieFetch['Link']; ?>">
-                            <div class="notification">
-                                <div class="icon">
-                                    <span class="material-icons-sharp">
-                                        cast
-                                    </span>
-                                </div>
-                                <div class="content">
-                                    <div class="info">
-                                        <h3>Geïntegreerd meldkamer systeem</h3>
-                                        <small class="text_muted">
-                                            Druk hier om naar het systeem te gaan!
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
+                </div>
                 <?php } ?>
 
             </div>
@@ -397,49 +388,13 @@ if ($userFetch['opgesprek'] == '1') {
     <script src="<?= $site ?>/js/index.js"></script>
 </body>
 <script>
-    $(document).ready(function() {
-        $("#postTraining").submit(function(event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-
-            // Set the value of the 'cleanup' parameter
-            var formData = $(this).serialize();
-            formData += "&postTraining"; // Add the 'cleanup' parameter with a value of 1
-
-            // Send an AJAX request to the server
-            $.ajax({
-                url: "<?= $site; ?>/includes/post_requests.php",
-                type: "POST",
-                data: formData,
-                dataType: "json", // Specify the expected data type as JSON
-                success: function(response) {
-                    // Check if the response is not empty
-                    if (response && Object.keys(response).length > 0) {
-                        // Handle the response from the server
-                        console.log("Form submitted successfully:", response);
-                        if (response.success) {
-                            // Show toastr success notification
-                            toastr.success(response.message);
-                        } else {
-                            // Show toastr error notification
-                            toastr.error(response.message);
-                        }
-                    } else {
-                        console.log("Empty response received");
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle any errors that occurred during the request
-                    console.error("An error occurred while submitting the form:", error);
-                },
-            });
-        });
-    });
-    $("#postTrainingid2").submit(function(event) {
+$(document).ready(function() {
+    $("#postTraining").submit(function(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
         // Set the value of the 'cleanup' parameter
         var formData = $(this).serialize();
-        formData += "&postTraining2"; // Add the 'cleanup' parameter with a value of 1
+        formData += "&postTraining"; // Add the 'cleanup' parameter with a value of 1
 
         // Send an AJAX request to the server
         $.ajax({
@@ -469,705 +424,747 @@ if ($userFetch['opgesprek'] == '1') {
             },
         });
     });
-    $("#postTrainingid3").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postTrainingid2").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postTraining3"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postTraining2"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#postTrainingid4").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postTrainingid3").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postTraining4"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postTraining3"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#postTrainingid5").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postTrainingid4").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postTraining5"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postTraining4"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#postTrainingid6").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postTrainingid5").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postTraining6"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postTraining5"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#bewerkConfiguratieSpecialisatie").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postTrainingid6").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&bewerkConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postTraining6"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $(".bewerkConfiguratieSpecialisatieForm").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#bewerkConfiguratieSpecialisatie").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Get the form's ID
-        var formId = $(this).attr('id');
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&bewerkConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-
-        // Check which form was submitted
-        if (formId.includes("bewerkConfiguratieSpecialisatie1")) {
-            formData += "&bewerkConfiguratieSpecialisatie1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieSpecialisatie2")) {
-            formData += "&bewerkConfiguratieSpecialisatie2"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie1")) {
-            formData += "&bewerkConfiguratieinmeldoptiespolitie1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie2")) {
-            formData += "&bewerkConfiguratieinmeldoptiespolitie2"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance1")) {
-            formData += "&bewerkConfiguratieinmeldoptiesambulance1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance2")) {
-            formData += "&bewerkConfiguratieinmeldoptiesambulance2"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar1")) {
-            formData += "&bewerkConfiguratieinmeldoptieskmar1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar2")) {
-            formData += "&bewerkConfiguratieinmeldoptieskmar2"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer1")) {
-            formData += "&bewerkConfiguratieinmeldoptiesbrandweer1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer2")) {
-            formData += "&bewerkConfiguratieinmeldoptiesbrandweer2"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving1")) {
-            formData += "&bewerkConfiguratieinmeldoptieshandhaving1"; // Add the 'cleanup' parameter with a value of 1
-        } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving2")) {
-            formData += "&bewerkConfiguratieinmeldoptieshandhaving2"; // Add the 'cleanup' parameter with a value of 1
-        }
-
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfiguratieSpecialisatie").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$(".bewerkConfiguratieSpecialisatieForm").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
+    // Get the form's ID
+    var formId = $(this).attr('id');
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+
+    // Check which form was submitted
+    if (formId.includes("bewerkConfiguratieSpecialisatie1")) {
+        formData += "&bewerkConfiguratieSpecialisatie1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieSpecialisatie2")) {
+        formData += "&bewerkConfiguratieSpecialisatie2"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie1")) {
+        formData += "&bewerkConfiguratieinmeldoptiespolitie1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiespolitie2")) {
+        formData += "&bewerkConfiguratieinmeldoptiespolitie2"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance1")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptiesambulance1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiesambulance2")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptiesambulance2"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar1")) {
+        formData += "&bewerkConfiguratieinmeldoptieskmar1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptieskmar2")) {
+        formData += "&bewerkConfiguratieinmeldoptieskmar2"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer1")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptiesbrandweer1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptiesbrandweer2")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptiesbrandweer2"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving1")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptieshandhaving1"; // Add the 'cleanup' parameter with a value of 1
+    } else if (formId.includes("bewerkConfiguratieinmeldoptieshandhaving2")) {
+        formData +=
+        "&bewerkConfiguratieinmeldoptieshandhaving2"; // Add the 'cleanup' parameter with a value of 1
+    }
+
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfiguratieinmeldoptieshandhaving").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfiguratieSpecialisatie").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfiguratieinmeldoptieshandhaving"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfiguratieSpecialisatie"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfigureerInmeldoptiesPolitie").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfiguratieinmeldoptieshandhaving").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfigureerInmeldoptiesPolitie"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfiguratieinmeldoptieshandhaving"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfigureerInmeldoptiesAmbulance").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfigureerInmeldoptiesPolitie").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfigureerInmeldoptiesAmbulance"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfigureerInmeldoptiesPolitie"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfigureerInmeldoptieskmar").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfigureerInmeldoptiesAmbulance").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfigureerInmeldoptieskmar"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfigureerInmeldoptiesAmbulance"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegConfigureerInmeldoptiesbrandweer").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfigureerInmeldoptieskmar").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegConfigureerInmeldoptiesbrandweer"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfigureerInmeldoptieskmar"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#postBeheerRank").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegConfigureerInmeldoptiesbrandweer").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postBeheerRank"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegConfigureerInmeldoptiesbrandweer"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#wijzigAddons").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#postBeheerRank").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&wijzigAddons"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postBeheerRank"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "../includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#opslaanGebruikGMS").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#wijzigAddons").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&opslaanGebruikGMS"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&wijzigAddons"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        $('#gmsDiv').load(location.href + ' #gmsDiv');
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#voegLidToe").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#opslaanGebruikGMS").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&voegLidToe"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&opslaanGebruikGMS"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        $('#gmsDiv').load(location.href + ' #gmsDiv');
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    $('#gmsDiv').load(location.href + ' #gmsDiv');
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#VerwijderGebruiker").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#voegLidToe").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&VerwijderGebruiker"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&voegLidToe"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        $('#gmsDiv').load(location.href + ' #gmsDiv');
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    $('#gmsDiv').load(location.href + ' #gmsDiv');
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#BewerkGebruiker").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#VerwijderGebruiker").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&BewerkGebruiker"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&VerwijderGebruiker"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        $('#gmsDiv').load(location.href + ' #gmsDiv');
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    $('#gmsDiv').load(location.href + ' #gmsDiv');
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
-    $("#postCreerVacature").submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+});
+$("#BewerkGebruiker").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-        // Set the value of the 'cleanup' parameter
-        var formData = $(this).serialize();
-        formData += "&postCreerVacature"; // Add the 'cleanup' parameter with a value of 1
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&BewerkGebruiker"; // Add the 'cleanup' parameter with a value of 1
 
-        // Send an AJAX request to the server
-        $.ajax({
-            url: "<?= $site; ?>/includes/post_requests.php",
-            type: "POST",
-            data: formData,
-            dataType: "json", // Specify the expected data type as JSON
-            success: function(response) {
-                // Check if the response is not empty
-                if (response && Object.keys(response).length > 0) {
-                    // Handle the response from the server
-                    console.log("Form submitted successfully:", response);
-                    if (response.success) {
-                        $('#gmsDiv').load(location.href + ' #gmsDiv');
-                        // Show toastr success notification
-                        toastr.success(response.message);
-                    } else {
-                        // Show toastr error notification
-                        toastr.error(response.message);
-                    }
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    $('#gmsDiv').load(location.href + ' #gmsDiv');
+                    // Show toastr success notification
+                    toastr.success(response.message);
                 } else {
-                    console.log("Empty response received");
+                    // Show toastr error notification
+                    toastr.error(response.message);
                 }
-            },
-            error: function(xhr, status, error) {
-                // Handle any errors that occurred during the request
-                console.error("An error occurred while submitting the form:", error);
-            },
-        });
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
     });
+});
+$("#postCreerVacature").submit(function(event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Set the value of the 'cleanup' parameter
+    var formData = $(this).serialize();
+    formData += "&postCreerVacature"; // Add the 'cleanup' parameter with a value of 1
+
+    // Send an AJAX request to the server
+    $.ajax({
+        url: "<?= $site; ?>/includes/post_requests.php",
+        type: "POST",
+        data: formData,
+        dataType: "json", // Specify the expected data type as JSON
+        success: function(response) {
+            // Check if the response is not empty
+            if (response && Object.keys(response).length > 0) {
+                // Handle the response from the server
+                console.log("Form submitted successfully:", response);
+                if (response.success) {
+                    $('#gmsDiv').load(location.href + ' #gmsDiv');
+                    // Show toastr success notification
+                    toastr.success(response.message);
+                } else {
+                    // Show toastr error notification
+                    toastr.error(response.message);
+                }
+            } else {
+                console.log("Empty response received");
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle any errors that occurred during the request
+            console.error("An error occurred while submitting the form:", error);
+        },
+    });
+});
 </script>
 
 </html>

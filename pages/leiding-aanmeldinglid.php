@@ -3,86 +3,62 @@ if ($leiding != 1) {
     echo 'Geen toegang!';
 } else {
     if (isset($_GET['id'])) {
-        $id = $db->real_escape_string($_GET['id']);
+        $id = $_GET['id'];
+
         $aanmeldingQ = $db->prepare("SELECT * FROM aanmeldingen WHERE id = ?");
-        $aanmeldingQ->bind_param("s", $id);
-        $aanmeldingQ->execute();
-        $result = $aanmeldingQ->get_result();
-        $aanmeldingF = $result->fetch_assoc();
-        $naam = $db->real_escape_string($_POST['naam']);
-        $achternaam = $db->real_escape_string($_POST['achternaam']);
-        $leeftijd = $db->real_escape_string($_POST['leeftijd']);
-        $geboortedatum = $db->real_escape_string($_POST['geboortedatum']);
-        $email = $db->real_escape_string($_POST['email']);
-        $telefoon = $db->real_escape_string($_POST['telefoon']);
-        $eenheid = $db->real_escape_string($_POST['eenheid']);
-        $whatsappgroep = $db->real_escape_string($_POST['whatsappgroep']);
-        $andereclan = $db->real_escape_string($_POST['andereclan']);
+        $aanmeldingQ->execute([$id]);
+        $aanmeldingF = $aanmeldingQ->fetch(PDO::FETCH_ASSOC);
+
+        $naam = $_POST['naam'] ?? '';
+        $achternaam = $_POST['achternaam'] ?? '';
+        $leeftijd = $_POST['leeftijd'] ?? '';
+        $geboortedatum = $_POST['geboortedatum'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $telefoon = $_POST['telefoon'] ?? '';
+        $eenheid = $_POST['afdeling'] ?? '';
+        $whatsappgroep = $_POST['whatsappgroep'] ?? '';
+        $andereclan = $_POST['andereclans'] ?? '';
+        function generateSalt()
+        {
+            $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+            $salt = NULL;
+            for ($i = 0; $i < 8; $i++) {
+                $salt .= $chars[mt_rand(0, 69)];
+            }
+            return $salt;
+        }
         $salt = generateSalt();
-        $username = $db->real_escape_string($_POST['username']);
-        $password = crypt($_POST['password'], $salt);
+        $username = $_POST['username'] ?? '';
+        $password = crypt($_POST['password'] ?? '', $salt);
 
         if (isset($_POST['wijzigen'])) {
             $query = $db->prepare("UPDATE aanmeldingen SET naam=?, achternaam=?, leeftijd=?, geboortedatum=?, email=?, telefoon=?, whatsappgroep=? WHERE id=?");
-
-            $query->bind_param("ssissssi", $naam, $achternaam, $leeftijd, $geboortedatum, $email, $telefoon, $whatsappgroep, $aanmeldingF['id']);
-            
-            $query->execute();            if ($query) { ?>
-                <script>
-                    toastr.success('Succesvol geupdated!', 'Succes');
-                </script>
-            <?php
-            } else {
-            ?>
-                <script>
-                    toastr.error('Er ging iets mis met het updaten!', 'Oeps');
-                </script>
-            <?php
-            }
+            $success = $query->execute([$naam, $achternaam, $leeftijd, $geboortedatum, $email, $telefoon, $whatsappgroep, $aanmeldingF['id']]);
+            echo $success ? "<script>toastr.success('Succesvol geupdated!', 'Succes');</script>" : "<script>toastr.error('Er ging iets mis met het updaten!', 'Oeps');</script>";
         }
+
         if (isset($_POST['accepteren'])) {
-            if (empty($email)) { ?>
-                <script>
-                    toastr.error('Je hebt geen email ingevult!', 'Oeps');
-                </script>
-            <?php } elseif (empty($username)) { ?>
-                <script>
-                    toastr.error('Je hebt geen gebruikersnaam ingevult!', 'Oeps');
-                </script>
-            <?php } elseif (empty($password)) { ?>
-                <script>
-                    toastr.error('Je hebt geen wachtwoord ingevult!', 'Oeps');
-                </script>
-                <?php } else {
-                $query = $db->query("INSERT INTO users (`username`, `password`, `salt`, `email`, `eenheid`, `naam`, `achternaam`, `leeftijd`, `geboortedatum`, `telefoon`, `andereclan` ) VALUES (
-'" . $username . "',
-'" . $password . "',
-'" . $salt . "',
-'" . $email . "',
-'" . $eenheid . "',
-'" . $naam . "',
-'" . $achternaam . "',
-'" . $leeftijd . "',
-'" . $geboortedatum . "',
-'" . $telefoon . "',
-'" . $andereclan . "')");
-                $query .= $db->query("UPDATE aanmeldingen SET accepted = '1' WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-                $subject = 'Aanmelding ' . $configuratieFetch['Link'] . '';
-                $bericht = '
+            if (empty($email)) {
+                echo "<script>toastr.error('Je hebt geen email ingevult!', 'Oeps');</script>";
+            } elseif (empty($username)) {
+                echo "<script>toastr.error('Je hebt geen gebruikersnaam ingevult!', 'Oeps');</script>";
+            } elseif (empty($password)) {
+                echo "<script>toastr.error('Je hebt geen wachtwoord ingevult!', 'Oeps');</script>";
+            } else {
+                $query = $db->prepare("INSERT INTO users (`username`, `password`, `salt`, `email`, `eenheid`, `naam`, `achternaam`, `leeftijd`, `geboortedatum`, `telefoon`, `andereclan`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $success = $query->execute([$username, $password, $salt, $email, $eenheid, $naam, $achternaam, $leeftijd, $geboortedatum, $telefoon, $andereclan]);
+
+                $updateQuery = $db->prepare("UPDATE aanmeldingen SET accepted = '1' WHERE id = ?");
+                $updateQuery->execute([$id]);
+
+                $subject = 'Aanmelding ' . $configuratieFetch['Link'];
+                $bericht = "
 <html>
-Beste ' . $naam . ' ' . $achternaam . ',<br />
-<br />
-Je bent succesvol door de eerste aanmeldingsronde gekomen! Dit betekent dat je jezelf kunt melden op onze server. Het IP of de link vind je onder deze mail! <br />
-<br />
-Hoe kun je jezelf voorbereiden?<br />
-Zorg ervoor dat je microfoon goed werkt. Zorg er ook voor dat je de vraagstelling meteen kunt beantwoorden. Dit hoeft natuurlijk niet per se, maar het is wel handig. Wij hanteren ook een beleid. Dit volgt: Uw naam bestaat uit je voornaam + eerste letter van je achternaam. Bijvoorbeeld: Latif S.<br />
-<br />
-Wij als team SuperGMS wensen je veel succes bij het sollicitatiegesprek!<br />
-<br />
+Beste $naam $achternaam,<br />
+Je bent succesvol door de eerste aanmeldingsronde gekomen! Dit betekent dat je jezelf kunt melden op onze server. Het IP of de link vind je onder deze mail!<br />
 Met vriendelijke groet,<br />
-Team SuperGMS<br />
-<br />
-';
+Team SuperGMS
+</html>";
 
                 if ($configuratieFetch['TeamspeakOfDiscord'] == '1') {
                     $bericht .= 'Teamspeak IP: ' . $configuratieFetch['LinkTeamspeakOfDiscord'];
@@ -90,317 +66,954 @@ Team SuperGMS<br />
                     $bericht .= 'Discord Link: ' . $configuratieFetch['LinkTeamspeakOfDiscord'];
                 }
 
-                $bericht .= '
-<br />
-<br />
-Antwoordt niet op deze mail! <br />
-Indien ongewenst, meld dit bij de eigenaren van ' . $configuratieFetch['Link'] . '!
-</html>
-';
-
-                $headers = "From: SuperGMS <info@supergms.nl>";
-                $headers .= 'X-Mailer: PHP/' . phpversion();
-                $headers .= "X-Priority: 1\n";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1\n";
-                $headers .= "Reply-To: <info@supergms.nl>" . "\r\n .";
-                $query .= mail($email, $subject, $bericht, $headers);
-                if ($query) { ?>
-                    <script>
-                        toastr.success('Succesvol geupdated!', 'Succes');
-                    </script>
-                <?php } else { ?>
-                    <script>
-                        toastr.error('Er ging iets mis met het updaten!', 'Oeps');
-                    </script>
-                <?php }
+                $headers = "From: SuperGMS <info@supergms.nl>\r\n";
+                $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
+                mail($email, $subject, $bericht, $headers);
+                echo $success ? "<script>toastr.success('Succesvol geupdated!', 'Succes');</script>" : "<script>toastr.error('Er ging iets mis met het updaten!', 'Oeps');</script>";
             }
         }
+
         if (isset($_POST['weigeren'])) {
-            $naam = $db->real_escape_string($_POST['naam']);
-            $achternaam = $db->real_escape_string($_POST['achternaam']);
-            $email = $db->real_escape_string($_POST['email']);
-
-            if (empty($email)) { ?>
-                <script>
-                    toastr.error('Je hebt geen email ingevult!', 'Oeps');
-                </script>
-                <?php } else {
-                $query .= $db->query("UPDATE aanmeldingen SET accepted = '2' WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-                $subject = 'Aanmelding ' . $configuratieFetch['Link'] . '';
-                $bericht = '
+            if (empty($email)) {
+                echo "<script>toastr.error('Je hebt geen email ingevult!', 'Oeps');</script>";
+            } else {
+                $query = $db->prepare("UPDATE aanmeldingen SET accepted = '2' WHERE id = ?");
+                $query->execute([$id]);
+                $subject = 'Aanmelding ' . $configuratieFetch['Link'];
+                $bericht = "
 <html>
-Beste ' . $naam . ' ' . $achternaam . ',<br />
-<br />
-Je bent bij deze helaas geweigerd voor een gesprek! Dit betekent dat je waarschijnlijk niet naar onze eisen viel helaas. Probeer het nog een keer na een tijdje. Misschien wordt het toch nog wat!<br />
-<br />
-Wij hopen je toch nog een verdere acties van jou!<br />
-<br />
+Beste $naam $achternaam,<br />
+Je bent bij deze helaas geweigerd voor een gesprek! Dit betekent dat je waarschijnlijk niet naar onze eisen viel helaas.<br />
 Met vriendelijke groet,<br />
-Team SuperGMS<br />
-<br />
-<br />
-Antwoordt niet op deze mail! <br />
-Indien ongewenst, meld dit bij de eigenaren van ' . $configuratieFetch['Link'] . '!
-</html>
-';
-                $headers = "From: SuperGMS <info@supergms.nl>";
-                $headers .= 'X-Mailer: PHP/' . phpversion();
-                $headers .= "X-Priority: 1\n";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1\n";
-                $headers .= "Reply-To: <info@supergms.nl>" . "\r\n .";
-                $query .= mail($email, $subject, $bericht, $headers);
-                if ($query) { ?>
-                    <script>
-                        toastr.success('Succesvol geupdated!', 'Succes');
-                    </script>
-                <?php } else { ?>
-                    <script>
-                        toastr.error('Er ging iets mis met het updaten!', 'Oeps');
-                    </script>
-                <?php
-                }
+Team SuperGMS
+</html>";
+
+                $headers = "From: SuperGMS <info@supergms.nl>\r\n";
+                $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
+                mail($email, $subject, $bericht, $headers);
+                echo "<script>toastr.success('Succesvol geupdated!', 'Succes');</script>";
             }
         }
+
         if (isset($_POST['aanmaken']) && isset($_GET['id'])) {
-            $query .= $db->query("UPDATE aanmeldingen SET accepted = '3' WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-            $id = $db->real_escape_string($_GET['id']);
-            $email = $db->real_escape_string($_POST['email']);
-            $username = $db->real_escape_string($_POST['username']);
-            $password = $db->real_escape_string($_POST['password']);
+            $query = $db->prepare("UPDATE aanmeldingen SET accepted = '3' WHERE id = ?");
+            $query->execute([$id]);
+            $email = $_POST['email'] ?? '';
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
 
             if (empty($username)) {
                 echo 'Geen gebruikersnaam ingevult!';
             } elseif (empty($password)) {
                 echo 'Geen wachtwoord ingevult!';
             } else {
-
-                $subject = 'Gegevens ' . $configuratieFetch['Link'] . '';
-                $bericht = '
+                $subject = 'Gegevens ' . $configuratieFetch['Link'];
+                $bericht = "
 <html>
 Hallo,<br />
-<br />
-Bij deze ben je geaccepteerd in het systeem van ' . $configuratieFetch['Link'] . '. Hierbij ontvang je de gegevens voor het Intranet.<br />
-<br />
-Inloggen kan via <a href="https://supergms.nl/intranet/' . $configuratieFetch['Link'] . '">deze link</a> met de volgende informatie:<br />
-E-Mail: ' . $email . '<br />
-Wachtwoord: ' . $password . '<br />
-<br />
+Bij deze ben je geaccepteerd in het systeem van {$configuratieFetch['Link']}. Hierbij ontvang je de gegevens voor het Intranet.<br />
+Inloggen kan via <a href='https://supergms.nl/intranet/{$configuratieFetch['Link']}'>deze link</a> met de volgende informatie:<br />
+E-Mail: $email<br />
+Wachtwoord: $password<br />
 Met vriendelijke groet,<br />
-Team SuperGMS<br />                                
-<br />
-<br />
-Antwoordt niet op deze mail! <br />
-Indien ongewenst, meld dit bij de eigenaren van ' . $configuratieFetch['Link'] . '!
-</html>
-';
-                $headers = "From: SuperGMS <info@supergms.nl>";
-                $headers .= 'X-Mailer: PHP/' . phpversion();
-                $headers .= "X-Priority: 1\n";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=iso-8859-1\n";
-                $headers .= "Reply-To: <info@supergms.nl>" . "\r\n .";
-                $query .= mail($email, $subject, $bericht, $headers);
-                if ($query) { ?>
-                    <script>
-                        toastr.success('Succesvol aangemaakt!', 'Succes');
-                    </script>
-                <?php } else { ?>
-                    <script>
-                        toastr.error('Er ging iets mis met het aanmaken!', 'Oeps');
-                    </script>
-        <?php }
+Team SuperGMS
+</html>";
+
+                $headers = "From: SuperGMS <info@supergms.nl>\r\n";
+                $headers .= "Content-Type: text/html; charset=iso-8859-1\r\n";
+                mail($email, $subject, $bericht, $headers);
+                echo "<script>toastr.success('Succesvol aangemaakt!', 'Succes');</script>";
             }
         }
-        ?>
+?>
 
-        <h1>Aanmelding <?php echo $aanmeldingF['naam']; ?> <?php echo $aanmeldingF['achternaam']; ?> | ID: <?php echo $aanmeldingF['id']; ?></h1>
 
         <style>
-            .form-control-input {
+            main .recent-orders table {
+                text-align: left;
                 width: 100%;
-                height: 40px;
-                padding-left: 15px;
-                border-radius: 10px;
-                background: lightgray;
-                font-family: 'Poppins';
-                font-size: 15;
-                font-weight: 600;
+                margin-right: 5%;
+                margin-bottom: 1.75%;
+                float: left;
             }
 
-            .form-label-input {
+            .devider {
+                margin: 10px;
+            }
+
+            input {
+                -webkit-font-smoothing: antialiased;
+                text-size-adjust: 100%;
+                --van-black: #000;
+                --van-white: #fff;
+                --van-gray-1: #f7f8fa;
+                --van-gray-2: #f2f3f5;
+                --van-gray-3: #ebedf0;
+                --van-gray-4: #dcdee0;
+                --van-gray-5: #c8c9cc;
+                --van-gray-6: #969799;
+                --van-gray-7: #646566;
+                --van-gray-8: #323233;
+                --van-red: #ee0a24;
+                --van-blue: #1989fa;
+                --van-orange: #ff976a;
+                --van-orange-dark: #ed6a0c;
+                --van-orange-light: #fffbe8;
+                --van-green: #07c160;
+                --van-gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+                --van-gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+                --van-primary-color: var(--van-blue);
+                --van-success-color: var(--van-green);
+                --van-danger-color: var(--van-red);
+                --van-warning-color: var(--van-orange);
+                --van-text-color: var(--van-gray-8);
+                --van-text-color-2: var(--van-gray-6);
+                --van-text-color-3: var(--van-gray-5);
+                --van-text-link-color: #576b95;
+                --van-active-color: var(--van-gray-2);
+                --van-active-opacity: 0.6;
+                --van-disabled-opacity: 0.5;
+                --van-background-color: var(--van-gray-1);
+                --van-background-color-light: var(--van-white);
+                --van-padding-base: 4px;
+                --van-padding-xs: 8px;
+                --van-padding-sm: 12px;
+                --van-padding-md: 16px;
+                --van-padding-lg: 24px;
+                --van-padding-xl: 32px;
+                --van-font-size-xs: 10px;
+                --van-font-size-sm: 12px;
+                --van-font-size-md: 14px;
+                --van-font-size-lg: 16px;
+                --van-font-weight-bold: 500;
+                --van-line-height-xs: 14px;
+                --van-line-height-sm: 18px;
+                --van-line-height-md: 20px;
+                --van-line-height-lg: 22px;
+                --van-base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+                --van-price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+                --van-animation-duration-base: 0.3s;
+                --van-animation-duration-fast: 0.2s;
+                --van-animation-timing-function-enter: ease-out;
+                --van-animation-timing-function-leave: ease-in;
+                --van-border-color: var(--van-gray-3);
+                --van-border-width-base: 1px;
+                --van-border-radius-sm: 2px;
+                --van-border-radius-md: 4px;
+                --van-border-radius-lg: 8px;
+                --van-border-radius-max: 999px;
+                --van-badge-size: 16px;
+                --van-badge-color: var(--van-white);
+                --van-badge-padding: 0 3px;
+                --van-badge-font-size: var(--van-font-size-sm);
+                --van-badge-font-weight: var(--van-font-weight-bold);
+                --van-badge-border-width: var(--van-border-width-base);
+                --van-badge-background-color: var(--van-danger-color);
+                --van-badge-dot-color: var(--van-danger-color);
+                --van-badge-dot-size: 8px;
+                --van-badge-font-family: -apple-system-font, Helvetica Neue, Arial, sans-serif;
+                --van-popup-background-color: var(--van-background-color-light);
+                --van-popup-transition: transform var(--van-animation-duration-base);
+                --van-popup-round-border-radius: 16px;
+                --van-popup-close-icon-size: 22px;
+                --van-popup-close-icon-color: var(--van-gray-5);
+                --van-popup-close-icon-margin: 16px;
+                --van-popup-close-icon-z-index: 1;
+                --van-loading-text-color: var(--van-text-color-2);
+                --van-loading-text-font-size: var(--van-font-size-md);
+                --van-loading-spinner-color: var(--van-gray-5);
+                --van-loading-spinner-size: 30px;
+                --van-loading-spinner-animation-duration: 0.8s;
+                --van-button-mini-height: 24px;
+                --van-button-mini-padding: 0 var(--van-padding-base);
+                --van-button-mini-font-size: var(--van-font-size-xs);
+                --van-button-small-height: 32px;
+                --van-button-small-padding: 0 var(--van-padding-xs);
+                --van-button-small-font-size: var(--van-font-size-sm);
+                --van-button-normal-padding: 0 15px;
+                --van-button-normal-font-size: var(--van-font-size-md);
+                --van-button-large-height: 50px;
+                --van-button-default-height: 44px;
+                --van-button-default-line-height: 1.2;
+                --van-button-default-font-size: var(--van-font-size-lg);
+                --van-button-default-color: var(--van-text-color);
+                --van-button-default-background-color: var(--van-background-color-light);
+                --van-button-default-border-color: var(--van-border-color);
+                --van-button-primary-color: var(--van-white);
+                --van-button-primary-background-color: var(--van-primary-color);
+                --van-button-primary-border-color: var(--van-primary-color);
+                --van-button-success-color: var(--van-white);
+                --van-button-success-background-color: var(--van-success-color);
+                --van-button-success-border-color: var(--van-success-color);
+                --van-button-danger-color: var(--van-white);
+                --van-button-danger-background-color: var(--van-danger-color);
+                --van-button-danger-border-color: var(--van-danger-color);
+                --van-button-warning-color: var(--van-white);
+                --van-button-warning-background-color: var(--van-warning-color);
+                --van-button-warning-border-color: var(--van-warning-color);
+                --van-button-border-width: var(--van-border-width-base);
+                --van-button-border-radius: var(--van-border-radius-sm);
+                --van-button-round-border-radius: var(--van-border-radius-max);
+                --van-button-plain-background-color: var(--van-white);
+                --van-button-disabled-opacity: var(--van-disabled-opacity);
+                --van-button-icon-size: 1.2em;
+                --van-button-loading-icon-size: 20px;
+                --van-nav-bar-height: 46px;
+                --van-nav-bar-background-color: var(--van-background-color-light);
+                --van-nav-bar-arrow-size: 16px;
+                --van-nav-bar-icon-color: var(--van-primary-color);
+                --van-nav-bar-text-color: var(--van-primary-color);
+                --van-nav-bar-title-font-size: var(--van-font-size-lg);
+                --van-nav-bar-title-text-color: var(--van-text-color);
+                --van-nav-bar-z-index: 1;
+                --van-image-placeholder-text-color: var(--van-text-color-2);
+                --van-image-placeholder-font-size: var(--van-font-size-md);
+                --van-image-placeholder-background-color: var(--van-background-color);
+                --van-image-loading-icon-size: 32px;
+                --van-image-loading-icon-color: var(--van-gray-4);
+                --van-image-error-icon-size: 32px;
+                --van-image-error-icon-color: var(--van-gray-4);
+                --van-tag-padding: 0 var(--van-padding-base);
+                --van-tag-text-color: var(--van-white);
+                --van-tag-font-size: var(--van-font-size-sm);
+                --van-tag-border-radius: 2px;
+                --van-tag-line-height: 16px;
+                --van-tag-medium-padding: 2px 6px;
+                --van-tag-large-padding: var(--van-padding-base) var(--van-padding-xs);
+                --van-tag-large-border-radius: var(--van-border-radius-md);
+                --van-tag-large-font-size: var(--van-font-size-md);
+                --van-tag-round-border-radius: var(--van-border-radius-max);
+                --van-tag-danger-color: var(--van-danger-color);
+                --van-tag-primary-color: var(--van-primary-color);
+                --van-tag-success-color: var(--van-success-color);
+                --van-tag-warning-color: var(--van-warning-color);
+                --van-tag-default-color: var(--van-gray-6);
+                --van-tag-plain-background-color: var(--van-background-color-light);
+                --van-card-padding: var(--van-padding-xs) var(--van-padding-md);
+                --van-card-font-size: var(--van-font-size-sm);
+                --van-card-text-color: var(--van-text-color);
+                --van-card-background-color: var(--van-gray-1);
+                --van-card-thumb-size: 88px;
+                --van-card-thumb-border-radius: var(--van-border-radius-lg);
+                --van-card-title-line-height: 16px;
+                --van-card-desc-color: var(--van-gray-7);
+                --van-card-desc-line-height: var(--van-line-height-md);
+                --van-card-price-color: var(--van-gray-8);
+                --van-card-origin-price-color: var(--van-text-color-2);
+                --van-card-num-color: var(--van-text-color-2);
+                --van-card-origin-price-font-size: var(--van-font-size-xs);
+                --van-card-price-font-size: var(--van-font-size-sm);
+                --van-card-price-integer-font-size: var(--van-font-size-lg);
+                --van-card-price-font-family: var(--van-price-integer-font-family);
+                --van-checkbox-size: 20px;
+                --van-checkbox-border-color: var(--van-gray-5);
+                --van-checkbox-transition-duration: var(--van-animation-duration-fast);
+                --van-checkbox-label-margin: var(--van-padding-xs);
+                --van-checkbox-label-color: var(--van-text-color);
+                --van-checkbox-checked-icon-color: var(--van-primary-color);
+                --van-checkbox-disabled-icon-color: var(--van-gray-5);
+                --van-checkbox-disabled-label-color: var(--van-text-color-3);
+                --van-checkbox-disabled-background-color: var(--van-border-color);
+                --van-overlay-z-index: 1;
+                --van-overlay-background-color: rgba(0, 0, 0, 0.7);
+                box-sizing: inherit;
+                margin: 0;
+                font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                -webkit-appearance: none;
+                align-items: center;
+                border: 1px solid transparent;
+                display: inline-flex;
+                font-size: 1rem;
+                height: 2.5em;
+                justify-content: flex-start;
+                line-height: 1.5;
+                padding-bottom: calc(.5em - 1px);
+                padding-left: calc(.75em - 1px);
+                padding-right: calc(.75em - 1px);
+                padding-top: calc(.5em - 1px);
+                position: relative;
+                vertical-align: top;
+                background-color: #fff;
+                border-color: #dbdbdb;
+                border-radius: 4px;
+                color: #363636;
+                max-width: 100%;
+                width: 100%;
+                box-shadow: none;
+            }
+
+            .nieuw {
+                -webkit-font-smoothing: antialiased;
+                text-size-adjust: 100%;
+                --van-black: #000;
+                --van-white: #fff;
+                --van-gray-1: #f7f8fa;
+                --van-gray-2: #f2f3f5;
+                --van-gray-3: #ebedf0;
+                --van-gray-4: #dcdee0;
+                --van-gray-5: #c8c9cc;
+                --van-gray-6: #969799;
+                --van-gray-7: #646566;
+                --van-gray-8: #323233;
+                --van-red: #ee0a24;
+                --van-blue: #1989fa;
+                --van-orange: #ff976a;
+                --van-orange-dark: #ed6a0c;
+                --van-orange-light: #fffbe8;
+                --van-green: #07c160;
+                --van-gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+                --van-gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+                --van-primary-color: var(--van-blue);
+                --van-success-color: var(--van-green);
+                --van-danger-color: var(--van-red);
+                --van-warning-color: var(--van-orange);
+                --van-text-color: var(--van-gray-8);
+                --van-text-color-2: var(--van-gray-6);
+                --van-text-color-3: var(--van-gray-5);
+                --van-text-link-color: #576b95;
+                --van-active-color: var(--van-gray-2);
+                --van-active-opacity: 0.6;
+                --van-disabled-opacity: 0.5;
+                --van-background-color: var(--van-gray-1);
+                --van-background-color-light: var(--van-white);
+                --van-padding-base: 4px;
+                --van-padding-xs: 8px;
+                --van-padding-sm: 12px;
+                --van-padding-md: 16px;
+                --van-padding-lg: 24px;
+                --van-padding-xl: 32px;
+                --van-font-size-xs: 10px;
+                --van-font-size-sm: 12px;
+                --van-font-size-md: 14px;
+                --van-font-size-lg: 16px;
+                --van-font-weight-bold: 500;
+                --van-line-height-xs: 14px;
+                --van-line-height-sm: 18px;
+                --van-line-height-md: 20px;
+                --van-line-height-lg: 22px;
+                --van-base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+                --van-price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+                --van-animation-duration-base: 0.3s;
+                --van-animation-duration-fast: 0.2s;
+                --van-animation-timing-function-enter: ease-out;
+                --van-animation-timing-function-leave: ease-in;
+                --van-border-color: var(--van-gray-3);
+                --van-border-width-base: 1px;
+                --van-border-radius-sm: 2px;
+                --van-border-radius-md: 4px;
+                --van-border-radius-lg: 8px;
+                --van-border-radius-max: 999px;
+                --van-badge-size: 16px;
+                --van-badge-color: var(--van-white);
+                --van-badge-padding: 0 3px;
+                --van-badge-font-size: var(--van-font-size-sm);
+                --van-badge-font-weight: var(--van-font-weight-bold);
+                --van-badge-border-width: var(--van-border-width-base);
+                --van-badge-background-color: var(--van-danger-color);
+                --van-badge-dot-color: var(--van-danger-color);
+                --van-badge-dot-size: 8px;
+                --van-badge-font-family: -apple-system-font, Helvetica Neue, Arial, sans-serif;
+                --van-popup-background-color: var(--van-background-color-light);
+                --van-popup-transition: transform var(--van-animation-duration-base);
+                --van-popup-round-border-radius: 16px;
+                --van-popup-close-icon-size: 22px;
+                --van-popup-close-icon-color: var(--van-gray-5);
+                --van-popup-close-icon-margin: 16px;
+                --van-popup-close-icon-z-index: 1;
+                --van-loading-text-color: var(--van-text-color-2);
+                --van-loading-text-font-size: var(--van-font-size-md);
+                --van-loading-spinner-color: var(--van-gray-5);
+                --van-loading-spinner-size: 30px;
+                --van-loading-spinner-animation-duration: 0.8s;
+                --van-button-mini-height: 24px;
+                --van-button-mini-padding: 0 var(--van-padding-base);
+                --van-button-mini-font-size: var(--van-font-size-xs);
+                --van-button-small-height: 32px;
+                --van-button-small-padding: 0 var(--van-padding-xs);
+                --van-button-small-font-size: var(--van-font-size-sm);
+                --van-button-normal-padding: 0 15px;
+                --van-button-normal-font-size: var(--van-font-size-md);
+                --van-button-large-height: 50px;
+                --van-button-default-height: 44px;
+                --van-button-default-line-height: 1.2;
+                --van-button-default-font-size: var(--van-font-size-lg);
+                --van-button-default-color: var(--van-text-color);
+                --van-button-default-background-color: var(--van-background-color-light);
+                --van-button-default-border-color: var(--van-border-color);
+                --van-button-primary-color: var(--van-white);
+                --van-button-primary-background-color: var(--van-primary-color);
+                --van-button-primary-border-color: var(--van-primary-color);
+                --van-button-success-color: var(--van-white);
+                --van-button-success-background-color: var(--van-success-color);
+                --van-button-success-border-color: var(--van-success-color);
+                --van-button-danger-color: var(--van-white);
+                --van-button-danger-background-color: var(--van-danger-color);
+                --van-button-danger-border-color: var(--van-danger-color);
+                --van-button-warning-color: var(--van-white);
+                --van-button-warning-background-color: var(--van-warning-color);
+                --van-button-warning-border-color: var(--van-warning-color);
+                --van-button-border-width: var(--van-border-width-base);
+                --van-button-border-radius: var(--van-border-radius-sm);
+                --van-button-round-border-radius: var(--van-border-radius-max);
+                --van-button-plain-background-color: var(--van-white);
+                --van-button-disabled-opacity: var(--van-disabled-opacity);
+                --van-button-icon-size: 1.2em;
+                --van-button-loading-icon-size: 20px;
+                --van-nav-bar-height: 46px;
+                --van-nav-bar-background-color: var(--van-background-color-light);
+                --van-nav-bar-arrow-size: 16px;
+                --van-nav-bar-icon-color: var(--van-primary-color);
+                --van-nav-bar-text-color: var(--van-primary-color);
+                --van-nav-bar-title-font-size: var(--van-font-size-lg);
+                --van-nav-bar-title-text-color: var(--van-text-color);
+                --van-nav-bar-z-index: 1;
+                --van-image-placeholder-text-color: var(--van-text-color-2);
+                --van-image-placeholder-font-size: var(--van-font-size-md);
+                --van-image-placeholder-background-color: var(--van-background-color);
+                --van-image-loading-icon-size: 32px;
+                --van-image-loading-icon-color: var(--van-gray-4);
+                --van-image-error-icon-size: 32px;
+                --van-image-error-icon-color: var(--van-gray-4);
+                --van-tag-padding: 0 var(--van-padding-base);
+                --van-tag-text-color: var(--van-white);
+                --van-tag-font-size: var(--van-font-size-sm);
+                --van-tag-border-radius: 2px;
+                --van-tag-line-height: 16px;
+                --van-tag-medium-padding: 2px 6px;
+                --van-tag-large-padding: var(--van-padding-base) var(--van-padding-xs);
+                --van-tag-large-border-radius: var(--van-border-radius-md);
+                --van-tag-large-font-size: var(--van-font-size-md);
+                --van-tag-round-border-radius: var(--van-border-radius-max);
+                --van-tag-danger-color: var(--van-danger-color);
+                --van-tag-primary-color: var(--van-primary-color);
+                --van-tag-success-color: var(--van-success-color);
+                --van-tag-warning-color: var(--van-warning-color);
+                --van-tag-default-color: var(--van-gray-6);
+                --van-tag-plain-background-color: var(--van-background-color-light);
+                --van-card-padding: var(--van-padding-xs) var(--van-padding-md);
+                --van-card-font-size: var(--van-font-size-sm);
+                --van-card-text-color: var(--van-text-color);
+                --van-card-background-color: var(--van-gray-1);
+                --van-card-thumb-size: 88px;
+                --van-card-thumb-border-radius: var(--van-border-radius-lg);
+                --van-card-title-line-height: 16px;
+                --van-card-desc-color: var(--van-gray-7);
+                --van-card-desc-line-height: var(--van-line-height-md);
+                --van-card-price-color: var(--van-gray-8);
+                --van-card-origin-price-color: var(--van-text-color-2);
+                --van-card-num-color: var(--van-text-color-2);
+                --van-card-origin-price-font-size: var(--van-font-size-xs);
+                --van-card-price-font-size: var(--van-font-size-sm);
+                --van-card-price-integer-font-size: var(--van-font-size-lg);
+                --van-card-price-font-family: var(--van-price-integer-font-family);
+                --van-checkbox-size: 20px;
+                --van-checkbox-border-color: var(--van-gray-5);
+                --van-checkbox-transition-duration: var(--van-animation-duration-fast);
+                --van-checkbox-label-margin: var(--van-padding-xs);
+                --van-checkbox-label-color: var(--van-text-color);
+                --van-checkbox-checked-icon-color: var(--van-primary-color);
+                --van-checkbox-disabled-icon-color: var(--van-gray-5);
+                --van-checkbox-disabled-label-color: var(--van-text-color-3);
+                --van-checkbox-disabled-background-color: var(--van-border-color);
+                --van-overlay-z-index: 1;
+                --van-overlay-background-color: rgba(0, 0, 0, 0.7);
+                box-sizing: inherit;
+                margin: 0;
+                font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                user-select: none;
+                -webkit-appearance: none;
+                align-items: center;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                display: inline-flex;
+                font-size: 1rem;
+                height: 2.5em;
+                line-height: 1.5;
+                position: relative;
+                vertical-align: top;
+                border-width: 1px;
+                cursor: pointer;
+                justify-content: center;
+                padding-bottom: calc(.5em - 1px);
+                padding-left: 1em;
+                padding-right: 1em;
+                padding-top: calc(.5em - 1px);
+                text-align: center;
+                white-space: nowrap;
+                outline: 0;
+                background-color: #48c774;
+                border-color: transparent;
+                color: #fff;
+                box-shadow: 0 0 0 .125em rgba(72, 199, 116, .25);
+            }
+
+            .selectnieuwe {
+                -webkit-font-smoothing: antialiased;
+                text-size-adjust: 100%;
+                --van-black: #000;
+                --van-white: #fff;
+                --van-gray-1: #f7f8fa;
+                --van-gray-2: #f2f3f5;
+                --van-gray-3: #ebedf0;
+                --van-gray-4: #dcdee0;
+                --van-gray-5: #c8c9cc;
+                --van-gray-6: #969799;
+                --van-gray-7: #646566;
+                --van-gray-8: #323233;
+                --van-red: #ee0a24;
+                --van-blue: #1989fa;
+                --van-orange: #ff976a;
+                --van-orange-dark: #ed6a0c;
+                --van-orange-light: #fffbe8;
+                --van-green: #07c160;
+                --van-gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+                --van-gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+                --van-primary-color: var(--van-blue);
+                --van-success-color: var(--van-green);
+                --van-danger-color: var(--van-red);
+                --van-warning-color: var(--van-orange);
+                --van-text-color: var(--van-gray-8);
+                --van-text-color-2: var(--van-gray-6);
+                --van-text-color-3: var(--van-gray-5);
+                --van-text-link-color: #576b95;
+                --van-active-color: var(--van-gray-2);
+                --van-active-opacity: 0.6;
+                --van-disabled-opacity: 0.5;
+                --van-background-color: var(--van-gray-1);
+                --van-background-color-light: var(--van-white);
+                --van-padding-base: 4px;
+                --van-padding-xs: 8px;
+                --van-padding-sm: 12px;
+                --van-padding-md: 16px;
+                --van-padding-lg: 24px;
+                --van-padding-xl: 32px;
+                --van-font-size-xs: 10px;
+                --van-font-size-sm: 12px;
+                --van-font-size-md: 14px;
+                --van-font-size-lg: 16px;
+                --van-font-weight-bold: 500;
+                --van-line-height-xs: 14px;
+                --van-line-height-sm: 18px;
+                --van-line-height-md: 20px;
+                --van-line-height-lg: 22px;
+                --van-base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+                --van-price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+                --van-animation-duration-base: 0.3s;
+                --van-animation-duration-fast: 0.2s;
+                --van-animation-timing-function-enter: ease-out;
+                --van-animation-timing-function-leave: ease-in;
+                --van-border-color: var(--van-gray-3);
+                --van-border-width-base: 1px;
+                --van-border-radius-sm: 2px;
+                --van-border-radius-md: 4px;
+                --van-border-radius-lg: 8px;
+                --van-border-radius-max: 999px;
+                --van-badge-size: 16px;
+                --van-badge-color: var(--van-white);
+                --van-badge-padding: 0 3px;
+                --van-badge-font-size: var(--van-font-size-sm);
+                --van-badge-font-weight: var(--van-font-weight-bold);
+                --van-badge-border-width: var(--van-border-width-base);
+                --van-badge-background-color: var(--van-danger-color);
+                --van-badge-dot-color: var(--van-danger-color);
+                --van-badge-dot-size: 8px;
+                --van-badge-font-family: -apple-system-font, Helvetica Neue, Arial, sans-serif;
+                --van-popup-background-color: var(--van-background-color-light);
+                --van-popup-transition: transform var(--van-animation-duration-base);
+                --van-popup-round-border-radius: 16px;
+                --van-popup-close-icon-size: 22px;
+                --van-popup-close-icon-color: var(--van-gray-5);
+                --van-popup-close-icon-margin: 16px;
+                --van-popup-close-icon-z-index: 1;
+                --van-loading-text-color: var(--van-text-color-2);
+                --van-loading-text-font-size: var(--van-font-size-md);
+                --van-loading-spinner-color: var(--van-gray-5);
+                --van-loading-spinner-size: 30px;
+                --van-loading-spinner-animation-duration: 0.8s;
+                --van-button-mini-height: 24px;
+                --van-button-mini-padding: 0 var(--van-padding-base);
+                --van-button-mini-font-size: var(--van-font-size-xs);
+                --van-button-small-height: 32px;
+                --van-button-small-padding: 0 var(--van-padding-xs);
+                --van-button-small-font-size: var(--van-font-size-sm);
+                --van-button-normal-padding: 0 15px;
+                --van-button-normal-font-size: var(--van-font-size-md);
+                --van-button-large-height: 50px;
+                --van-button-default-height: 44px;
+                --van-button-default-line-height: 1.2;
+                --van-button-default-font-size: var(--van-font-size-lg);
+                --van-button-default-color: var(--van-text-color);
+                --van-button-default-background-color: var(--van-background-color-light);
+                --van-button-default-border-color: var(--van-border-color);
+                --van-button-primary-color: var(--van-white);
+                --van-button-primary-background-color: var(--van-primary-color);
+                --van-button-primary-border-color: var(--van-primary-color);
+                --van-button-success-color: var(--van-white);
+                --van-button-success-background-color: var(--van-success-color);
+                --van-button-success-border-color: var(--van-success-color);
+                --van-button-danger-color: var(--van-white);
+                --van-button-danger-background-color: var(--van-danger-color);
+                --van-button-danger-border-color: var(--van-danger-color);
+                --van-button-warning-color: var(--van-white);
+                --van-button-warning-background-color: var(--van-warning-color);
+                --van-button-warning-border-color: var(--van-warning-color);
+                --van-button-border-width: var(--van-border-width-base);
+                --van-button-border-radius: var(--van-border-radius-sm);
+                --van-button-round-border-radius: var(--van-border-radius-max);
+                --van-button-plain-background-color: var(--van-white);
+                --van-button-disabled-opacity: var(--van-disabled-opacity);
+                --van-button-icon-size: 1.2em;
+                --van-button-loading-icon-size: 20px;
+                --van-nav-bar-height: 46px;
+                --van-nav-bar-background-color: var(--van-background-color-light);
+                --van-nav-bar-arrow-size: 16px;
+                --van-nav-bar-icon-color: var(--van-primary-color);
+                --van-nav-bar-text-color: var(--van-primary-color);
+                --van-nav-bar-title-font-size: var(--van-font-size-lg);
+                --van-nav-bar-title-text-color: var(--van-text-color);
+                --van-nav-bar-z-index: 1;
+                --van-image-placeholder-text-color: var(--van-text-color-2);
+                --van-image-placeholder-font-size: var(--van-font-size-md);
+                --van-image-placeholder-background-color: var(--van-background-color);
+                --van-image-loading-icon-size: 32px;
+                --van-image-loading-icon-color: var(--van-gray-4);
+                --van-image-error-icon-size: 32px;
+                --van-image-error-icon-color: var(--van-gray-4);
+                --van-tag-padding: 0 var(--van-padding-base);
+                --van-tag-text-color: var(--van-white);
+                --van-tag-font-size: var(--van-font-size-sm);
+                --van-tag-border-radius: 2px;
+                --van-tag-line-height: 16px;
+                --van-tag-medium-padding: 2px 6px;
+                --van-tag-large-padding: var(--van-padding-base) var(--van-padding-xs);
+                --van-tag-large-border-radius: var(--van-border-radius-md);
+                --van-tag-large-font-size: var(--van-font-size-md);
+                --van-tag-round-border-radius: var(--van-border-radius-max);
+                --van-tag-danger-color: var(--van-danger-color);
+                --van-tag-primary-color: var(--van-primary-color);
+                --van-tag-success-color: var(--van-success-color);
+                --van-tag-warning-color: var(--van-warning-color);
+                --van-tag-default-color: var(--van-gray-6);
+                --van-tag-plain-background-color: var(--van-background-color-light);
+                --van-card-padding: var(--van-padding-xs) var(--van-padding-md);
+                --van-card-font-size: var(--van-font-size-sm);
+                --van-card-text-color: var(--van-text-color);
+                --van-card-background-color: var(--van-gray-1);
+                --van-card-thumb-size: 88px;
+                --van-card-thumb-border-radius: var(--van-border-radius-lg);
+                --van-card-title-line-height: 16px;
+                --van-card-desc-color: var(--van-gray-7);
+                --van-card-desc-line-height: var(--van-line-height-md);
+                --van-card-price-color: var(--van-gray-8);
+                --van-card-origin-price-color: var(--van-text-color-2);
+                --van-card-num-color: var(--van-text-color-2);
+                --van-card-origin-price-font-size: var(--van-font-size-xs);
+                --van-card-price-font-size: var(--van-font-size-sm);
+                --van-card-price-integer-font-size: var(--van-font-size-lg);
+                --van-card-price-font-family: var(--van-price-integer-font-family);
+                --van-checkbox-size: 20px;
+                --van-checkbox-border-color: var(--van-gray-5);
+                --van-checkbox-transition-duration: var(--van-animation-duration-fast);
+                --van-checkbox-label-margin: var(--van-padding-xs);
+                --van-checkbox-label-color: var(--van-text-color);
+                --van-checkbox-checked-icon-color: var(--van-primary-color);
+                --van-checkbox-disabled-icon-color: var(--van-gray-5);
+                --van-checkbox-disabled-label-color: var(--van-text-color-3);
+                --van-checkbox-disabled-background-color: var(--van-border-color);
+                --van-overlay-z-index: 1;
+                --van-overlay-background-color: rgba(0, 0, 0, 0.7);
+                box-sizing: inherit;
+                margin: 0;
+                font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                -webkit-appearance: none;
+                align-items: center;
+                border: 1px solid transparent;
+                height: 2.5em;
+                justify-content: flex-start;
+                line-height: 1.5;
+                padding-bottom: calc(.5em - 1px);
+                padding-left: calc(.75em - 1px);
+                padding-top: calc(.5em - 1px);
+                position: relative;
+                vertical-align: top;
+                background-color: #fff;
+                border-radius: 4px;
+                color: #363636;
+                cursor: pointer;
                 display: block;
-                text-align: left;
-                margin-left: 1%;
-                margin-bottom: 0.5%;
+                font-size: 1em;
+                max-width: 100%;
+                outline: 0;
+                border-color: #3273dc;
+                box-shadow: 0 0 0 .125em rgba(50, 115, 220, .25);
+                padding-right: 2.5em;
+                -webkit-font-smoothing: antialiased;
+                text-size-adjust: 10
+            }
+
+            .labellabel-primary {
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                -webkit-text-size-adjust: 100%;
+                --van-black: #000;
+                --van-white: #fff;
+                --van-gray-1: #f7f8fa;
+                --van-gray-2: #f2f3f5;
+                --van-gray-3: #ebedf0;
+                --van-gray-4: #dcdee0;
+                --van-gray-5: #c8c9cc;
+                --van-gray-6: #969799;
+                --van-gray-7: #646566;
+                --van-gray-8: #323233;
+                --van-red: #ee0a24;
+                --van-blue: #1989fa;
+                --van-orange: #ff976a;
+                --van-orange-dark: #ed6a0c;
+                --van-orange-light: #fffbe8;
+                --van-green: #07c160;
+                --van-gradient-red: linear-gradient(to right, #ff6034, #ee0a24);
+                --van-gradient-orange: linear-gradient(to right, #ffd01e, #ff8917);
+                --van-primary-color: var(--van-blue);
+                --van-success-color: var(--van-green);
+                --van-danger-color: var(--van-red);
+                --van-warning-color: var(--van-orange);
+                --van-text-color: var(--van-gray-8);
+                --van-text-color-2: var(--van-gray-6);
+                --van-text-color-3: var(--van-gray-5);
+                --van-text-link-color: #576b95;
+                --van-active-color: var(--van-gray-2);
+                --van-active-opacity: 0.6;
+                --van-disabled-opacity: 0.5;
+                --van-background-color: var(--van-gray-1);
+                --van-background-color-light: var(--van-white);
+                --van-padding-base: 4px;
+                --van-padding-xs: 8px;
+                --van-padding-sm: 12px;
+                --van-padding-md: 16px;
+                --van-padding-lg: 24px;
+                --van-padding-xl: 32px;
+                --van-font-size-xs: 10px;
+                --van-font-size-sm: 12px;
+                --van-font-size-md: 14px;
+                --van-font-size-lg: 16px;
+                --van-font-weight-bold: 500;
+                --van-line-height-xs: 14px;
+                --van-line-height-sm: 18px;
+                --van-line-height-md: 20px;
+                --van-line-height-lg: 22px;
+                --van-base-font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
+                --van-price-integer-font-family: Avenir-Heavy, PingFang SC, Helvetica Neue, Arial, sans-serif;
+                --van-animation-duration-base: 0.3s;
+                --van-animation-duration-fast: 0.2s;
+                --van-animation-timing-function-enter: ease-out;
+                --van-animation-timing-function-leave: ease-in;
+                --van-border-color: var(--van-gray-3);
+                --van-border-width-base: 1px;
+                --van-border-radius-sm: 2px;
+                --van-border-radius-md: 4px;
+                --van-border-radius-lg: 8px;
+                --van-border-radius-max: 999px;
+                --van-badge-size: 16px;
+                --van-badge-color: var(--van-white);
+                --van-badge-padding: 0 3px;
+                --van-badge-font-size: var(--van-font-size-sm);
+                --van-badge-font-weight: var(--van-font-weight-bold);
+                --van-badge-border-width: var(--van-border-width-base);
+                --van-badge-background-color: var(--van-danger-color);
+                --van-badge-dot-color: var(--van-danger-color);
+                --van-badge-dot-size: 8px;
+                --van-badge-font-family: -apple-system-font, Helvetica Neue, Arial, sans-serif;
+                --van-popup-background-color: var(--van-background-color-light);
+                --van-popup-transition: transform var(--van-animation-duration-base);
+                --van-popup-round-border-radius: 16px;
+                --van-popup-close-icon-size: 22px;
+                --van-popup-close-icon-color: var(--van-gray-5);
+                --van-popup-close-icon-margin: 16px;
+                --van-popup-close-icon-z-index: 1;
+                --van-loading-text-color: var(--van-text-color-2);
+                --van-loading-text-font-size: var(--van-font-size-md);
+                --van-loading-spinner-color: var(--van-gray-5);
+                --van-loading-spinner-size: 30px;
+                --van-loading-spinner-animation-duration: 0.8s;
+                --van-button-mini-height: 24px;
+                --van-button-mini-padding: 0 var(--van-padding-base);
+                --van-button-mini-font-size: var(--van-font-size-xs);
+                --van-button-small-height: 32px;
+                --van-button-small-padding: 0 var(--van-padding-xs);
+                --van-button-small-font-size: var(--van-font-size-sm);
+                --van-button-normal-padding: 0 15px;
+                --van-button-normal-font-size: var(--van-font-size-md);
+                --van-button-large-height: 50px;
+                --van-button-default-height: 44px;
+                --van-button-default-line-height: 1.2;
+                --van-button-default-font-size: var(--van-font-size-lg);
+                --van-button-default-color: var(--van-text-color);
+                --van-button-default-background-color: var(--van-background-color-light);
+                --van-button-default-border-color: var(--van-border-color);
+                --van-button-primary-color: var(--van-white);
+                --van-button-primary-background-color: var(--van-primary-color);
+                --van-button-primary-border-color: var(--van-primary-color);
+                --van-button-success-color: var(--van-white);
+                --van-button-success-background-color: var(--van-success-color);
+                --van-button-success-border-color: var(--van-success-color);
+                --van-button-danger-color: var(--van-white);
+                --van-button-danger-background-color: var(--van-danger-color);
+                --van-button-danger-border-color: var(--van-danger-color);
+                --van-button-warning-color: var(--van-white);
+                --van-button-warning-background-color: var(--van-warning-color);
+                --van-button-warning-border-color: var(--van-warning-color);
+                --van-button-border-width: var(--van-border-width-base);
+                --van-button-border-radius: var(--van-border-radius-sm);
+                --van-button-round-border-radius: var(--van-border-radius-max);
+                --van-button-plain-background-color: var(--van-white);
+                --van-button-disabled-opacity: var(--van-disabled-opacity);
+                --van-button-icon-size: 1.2em;
+                --van-button-loading-icon-size: 20px;
+                --van-nav-bar-height: 46px;
+                --van-nav-bar-background-color: var(--van-background-color-light);
+                --van-nav-bar-arrow-size: 16px;
+                --van-nav-bar-icon-color: var(--van-primary-color);
+                --van-nav-bar-text-color: var(--van-primary-color);
+                --van-nav-bar-title-font-size: var(--van-font-size-lg);
+                --van-nav-bar-title-text-color: var(--van-text-color);
+                --van-nav-bar-z-index: 1;
+                --van-image-placeholder-text-color: var(--van-text-color-2);
+                --van-image-placeholder-font-size: var(--van-font-size-md);
+                --van-image-placeholder-background-color: var(--van-background-color);
+                --van-image-loading-icon-size: 32px;
+                --van-image-loading-icon-color: var(--van-gray-4);
+                --van-image-error-icon-size: 32px;
+                --van-image-error-icon-color: var(--van-gray-4);
+                --van-tag-padding: 0 var(--van-padding-base);
+                --van-tag-text-color: var(--van-white);
+                --van-tag-font-size: var(--van-font-size-sm);
+                --van-tag-border-radius: 2px;
+                --van-tag-line-height: 16px;
+                --van-tag-medium-padding: 2px 6px;
+                --van-tag-large-padding: var(--van-padding-base) var(--van-padding-xs);
+                --van-tag-large-border-radius: var(--van-border-radius-md);
+                --van-tag-large-font-size: var(--van-font-size-md);
+                --van-tag-round-border-radius: var(--van-border-radius-max);
+                --van-tag-danger-color: var(--van-danger-color);
+                --van-tag-primary-color: var(--van-primary-color);
+                --van-tag-success-color: var(--van-success-color);
+                --van-tag-warning-color: var(--van-warning-color);
+                --van-tag-default-color: var(--van-gray-6);
+                --van-tag-plain-background-color: var(--van-background-color-light);
+                --van-card-padding: var(--van-padding-xs) var(--van-padding-md);
+                --van-card-font-size: var(--van-font-size-sm);
+                --van-card-text-color: var(--van-text-color);
+                --van-card-background-color: var(--van-gray-1);
+                --van-card-thumb-size: 88px;
+                --van-card-thumb-border-radius: var(--van-border-radius-lg);
+                --van-card-title-line-height: 16px;
+                --van-card-desc-color: var(--van-gray-7);
+                --van-card-desc-line-height: var(--van-line-height-md);
+                --van-card-price-color: var(--van-gray-8);
+                --van-card-origin-price-color: var(--van-text-color-2);
+                --van-card-num-color: var(--van-text-color-2);
+                --van-card-origin-price-font-size: var(--van-font-size-xs);
+                --van-card-price-font-size: var(--van-font-size-sm);
+                --van-card-price-integer-font-size: var(--van-font-size-lg);
+                --van-card-price-font-family: var(--van-price-integer-font-family);
+                --van-checkbox-size: 20px;
+                --van-checkbox-border-color: var(--van-gray-5);
+                --van-checkbox-transition-duration: var(--van-animation-duration-fast);
+                --van-checkbox-label-margin: var(--van-padding-xs);
+                --van-checkbox-label-color: var(--van-text-color);
+                --van-checkbox-checked-icon-color: var(--van-primary-color);
+                --van-checkbox-disabled-icon-color: var(--van-gray-5);
+                --van-checkbox-disabled-label-color: var(--van-text-color-3);
+                --van-checkbox-disabled-background-color: var(--van-border-color);
+                --van-overlay-z-index: 1;
+                --van-overlay-background-color: rgba(0, 0, 0, 0.7);
+                box-sizing: inherit;
+                display: inline;
+                padding: .2em .6em .3em;
+                font-size: 75%;
+                font-weight: 700;
+                line-height: 1;
+                color: #fff;
+                text-align: center;
+                white-space: nowrap;
+                vertical-align: baseline;
+                border-radius: .25em;
+                background-color: #5bc0de;
+                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             }
         </style>
+
+        <h1>Aanmelding <?php echo htmlspecialchars($aanmeldingF['naam']); ?> <?php echo htmlspecialchars($aanmeldingF['achternaam']); ?> | ID: <?php echo htmlspecialchars($aanmeldingF['id']); ?></h1>
+
         <form action="" method="POST">
             <div class="recent-orders">
                 <table class="table">
                     <th>
                         <h2 style="text-align:center">Persoonsgegevens</h2>
                         <div class="form-group">
-
-                            <label for="inputPassword3" class="form-label-input">Naam:</label>
-                            <input type="text" name="naam" value="<?php echo $aanmeldingF['naam']; ?>" class="form-control-input" />
+                            <label class="form-label-input">Naam:</label>
+                            <input type="text" name="naam" value="<?php echo htmlspecialchars($aanmeldingF['naam']); ?>" class="form-control-input" />
                         </div>
                         <br />
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Achternaam:</label>
-                            <input type="text" name="achternaam" value="<?php echo $aanmeldingF['achternaam']; ?>" class="form-control-input" />
+                            <label class="form-label-input">Achternaam:</label>
+                            <input type="text" name="achternaam" value="<?php echo htmlspecialchars($aanmeldingF['achternaam']); ?>" class="form-control-input" />
                         </div>
                         <br />
-
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Leeftijd:</label>
-                            <input type="text" name="leeftijd" value="<?php echo $aanmeldingF['leeftijd']; ?>" class="form-control-input" />
+                            <label class="form-label-input">Leeftijd:</label>
+                            <input type="text" name="leeftijd" value="<?php echo htmlspecialchars($aanmeldingF['leeftijd']); ?>" class="form-control-input" />
                         </div>
                         <br />
-
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Geboortedatum:</label>
-                            <input type="text" name="geboortedatum" value="<?php echo $aanmeldingF['geboortedatum']; ?>" class="form-control-input" />
-                        </div>
-
-                        <br />
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">E-mail:</label>
-                            <input type="text" name="email" value="<?php echo $aanmeldingF['email']; ?>" class="form-control-input" />
-                        </div>
-
-                        <br />
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Telefoon:</label>
-                            <input type="text" name="telefoon" value="<?php echo $aanmeldingF['telefoon']; ?>" class="form-control-input" />
-                        </div>
-
-                        <br />
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">WhatsApp groep:</label>
-                            <select name="whatsappgroep" class="form-control-input">
-                                <option value="ja" <?php if ($aanmeldingF['whatsappgroep'] == 'ja') {
-                                                        echo 'selected';
-                                                    } ?>>Ja</option>
-                                <option value="nee" <?php if ($aanmeldingF['whatsappgroep'] == 'nee') {
-                                                        echo 'selected';
-                                                    } ?>>Nee</option>
-                            </select>
+                            <label class="form-label-input">Geboortedatum:</label>
+                            <input type="text" name="geboortedatum" value="<?php echo htmlspecialchars($aanmeldingF['geboortedatum']); ?>" class="form-control-input" />
                         </div>
                         <br />
-                        <br />
-                        <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
-                        <h2 style="text-align:center">Clan gerelateerd</h2>
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Eenheid:</label>
-                            <select name="eenheid" class="form-control-input">
-                                <option value="Politie" <?php if ($aanmeldingF['afdeling'] == 'Politie') {
-                                                            echo 'selected';
-                                                        } ?>>Politie</option>
-                                <option value="Handhaving" <?php if ($aanmeldingF['afdeling'] == 'Handhaving') {
-                                                                echo 'selected';
-                                                            } ?>>Handhaving</option>
-                                <option value="Koninklijke Marechaussee" <?php if ($aanmeldingF['afdeling'] == 'Koninklijke Marechaussee') {
-                                                                                echo 'selected';
-                                                                            } ?>>Koninklijke Marechaussee</option>
-                                <option value="Meldkamer" <?php if ($aanmeldingF['afdeling'] == 'Meldkamer') {
-                                                                echo 'selected';
-                                                            } ?>>Centralist</option>
-                                <option value="Brandweer" <?php if ($aanmeldingF['afdeling'] == 'Brandweer') {
-                                                                echo 'selected';
-                                                            } ?>>Brandweer</option>
-                                <option value="Ambulance" <?php if ($aanmeldingF['afdeling'] == 'Ambulance') {
-                                                                echo 'selected';
-                                                            } ?>>Ambulance</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Microfoon:</label>
-                            <input type="text" name="mic" value="<?php echo $aanmeldingF['mic']; ?>" class="form-control-input" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Eerder met mods gespeeld:</label>
-                            <input type="text" name="eerdermods" value="<?php echo $aanmeldingF['eerdermods']; ?>" class="form-control-input" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Hoelang online per week:</label>
-                            <input type="text" name="hoelangonline" value="<?php echo $aanmeldingF['hoelangonline']; ?>" class="form-control-input" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Andere clan:</label>
-                            <input type="text" name="andereclan" value="<?php echo $aanmeldingF['andereclans']; ?>" class="form-control-input" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Game:</label>
-                            <input type="text" name="gfwl" value="<?php echo $aanmeldingF['game']; ?>" class="form-control-input" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Motivatie:</label>
-                            <textarea type="text" class="form-control-input" name="vragen" id="exampleInputEmail1" onload="auto_grow(this)"><?php echo $aanmeldingF['vragen']; ?></textarea>
+                            <label class="form-label-input">E-mail:</label>
+                            <input type="text" name="email" value="<?php echo htmlspecialchars($aanmeldingF['email']); ?>" class="form-control-input" />
                         </div>
                         <br />
+                        <div class="form-group">
+                            <label class="form-label-input">Telefoon:</label>
+                            <input type="text" name="telefoon" value="<?php echo htmlspecialchars($aanmeldingF['telefoon']); ?>" class="form-control-input" />
+                        </div>
                         <br />
-                        <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
+                        <div class="form-group">
+                            <label class="form-label-input">WhatsApp groep:</label>
+                                <input type="text" name="eenheid" value="<?php echo htmlspecialchars($aanmeldingF['whatsappgroep']); ?>" class="form-control-input" />
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="form-label-input">Eenheid:</label>
+                            <input type="text" name="eenheid" value="<?php echo htmlspecialchars($aanmeldingF['afdeling']); ?>" class="form-control-input" />
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label class="form-label-input">Anderen clan:</label>
+                            <input type="text" name="andereclan" value="<?php echo htmlspecialchars($aanmeldingF['andereclans']); ?>" class="form-control-input" />
+                        </div>
+                        <br />
                         <h2 style="text-align:center">Accountgegevens</h2>
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Gebruikersnaam:</label>
-                            <input type="text" name="username" class="form-control-input" />
+                            <label class="form-label-input">Gebruikersnaam:</label>
+                            <input type="text" name="username" value="" class="form-control-input" />
                         </div>
+                        <br />
                         <div class="form-group">
-                            <label for="inputPassword3" class="form-label-input">Wachtwoord:</label>
-                            <input type="text" name="password" class="form-control-input" />
+                            <label class="form-label-input">Wachtwoord:</label>
+                            <input type="password" name="password" value="" class="form-control-input" />
                         </div>
-                        <style>
-                            .btn-success {
-                                width: 100%;
-                                margin-top: 1.5%;
-                                background: lightgreen;
-                                border-radius: 10px;
-                                height: 30px;
-                                font-family: 'Poppins';
-                                font-size: 15;
-                                font-weight: 600;
-                            }
-                        </style>
-                        <?php
-                        if ($aanmeldingF['accepted'] == 0) {
-                            echo '<input type="submit" style="width:100%;display: inline-block;" name="accepteren" value="Gebruiker accepteren" class="btn-success btn" />';
-                        } else if ($aanmeldingF['accepted'] == 1) {
-                            echo '<input type="submit" style="width:100%;display: inline-block;" name="aanmaken" value="Gebruiker aanmaken" class="btn-success btn" />';
-                        } else if ($aanmeldingF['accepted'] == 2) {
-                            echo '<input type="submit" style="width:100%;display: inline-block;" value="Gebruiker is al geweigerd" class="btn-success btn" disabled="disabled" />';
-                        } else if ($aanmeldingF['accepted'] == 3) {
-                            echo '<input type="submit" style="width:100%;display: inline-block;" value="Gebruiker is al aangemaakt" class="btn-success btn" disabled="disabled" />';
-                        }
-                        ?>
-                        <input type="submit" style="width:100%;display: inline-block;" name="weigeren" value="Weigeren" class="btn-danger btn" />
+                        <br />
+                        <input type="submit" name="wijzigen" value="Gegevens wijzigen" class="btn btn-primary" />
+                        <input type="submit" name="accepteren" value="Accepteren" class="btn btn-primary" />
+                        <input type="submit" name="weigeren" value="Weigeren" class="btn btn-primary" />
+                        <input type="submit" name="aanmaken" value="Aanmaken" class="btn btn-primary" />
                     </th>
-
                 </table>
             </div>
         </form>
-
-
-<?php } else {
-        echo '<h1>Je hebt geen id mee gegeven</h1>';
+<?php
     }
-} ?>
-<script>
-    window.onload = function() {
-        var textarea = document.getElementById('exampleInputEmail1');
-        auto_grow(textarea);
-    }
-
-    function auto_grow(element) {
-        element.style.height = "5px";
-        element.style.height = (element.scrollHeight) + "px";
-    }
-</script>
+}
+?>

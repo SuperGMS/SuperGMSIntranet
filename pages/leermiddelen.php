@@ -1,8 +1,9 @@
 <?php
 if ($userFetch['opgesprek'] == '1') {
     header("Location: opgesprek");
-} ?>
-
+    exit; // Make sure to exit after redirecting
+} 
+?>
 
 <!-- Hier nieuwe code onder -->
 
@@ -16,47 +17,45 @@ if ($userFetch['opgesprek'] == '1') {
                 <th style="width:33.3%">Afdeling</th>
             </tr>
             <tr>
-                <th colspan="5">
+                <th colspan="3">
                     <hr size="4" width="100%" style="margin-bottom:1rem;" color="red">
                 </th>
             </tr>
+        </thead>
+        <tbody>
             <?php
-            $getLeermiddelen = $db->query("SELECT * FROM downloads WHERE afdeling = '" . $userFetch['eenheid'] . "' OR afdeling = 'Elke afdeling'");
-            $countLeermiddelen = $getLeermiddelen->num_rows;
+            // Fetch learning materials
+            $getLeermiddelen = $db->prepare("SELECT * FROM downloads WHERE afdeling = :afdeling OR afdeling = 'Elke afdeling'");
+            $getLeermiddelen->execute(['afdeling' => $userFetch['eenheid']]);
+            $leermiddelenData = $getLeermiddelen->fetchAll(PDO::FETCH_ASSOC);
+            $countLeermiddelen = count($leermiddelenData);
 
-            while ($fetchLeermiddelen = $getLeermiddelen->fetch_array()) {
-                $getUsername = $db->query("SELECT username, id FROM users WHERE id = '" . $fetchLeermiddelen['made_uid'] . "'");
-                $fetchUsername = $getUsername->fetch_assoc();
+            if ($countLeermiddelen <= 0) {
+                echo '<tr><td colspan="3" style="text-align:center"><h4>Jij hebt nog geen leermiddelen tot je beschikking!</h4></td></tr>';
+            } else {
+                foreach ($leermiddelenData as $fetchLeermiddelen) {
+                    // Fetch the username for each learning material
+                    $getUsername = $db->prepare("SELECT username FROM users WHERE id = :made_uid");
+                    $getUsername->execute(['made_uid' => $fetchLeermiddelen['made_uid']]);
+                    $fetchUsername = $getUsername->fetch(PDO::FETCH_ASSOC);
+                    ?>
+                    <tr class="success">
+                        <td>
+                            <h4><?php echo htmlspecialchars($fetchUsername['username']); ?></h4>
+                        </td>
+                        <td>
+                            <a href="https://<?php echo htmlspecialchars($fetchLeermiddelen['url']); ?>" target="_blank">
+                                <h4><?php echo htmlspecialchars($fetchLeermiddelen['title']); ?></h4>
+                            </a>
+                        </td>
+                        <td>
+                            <h4><?php echo htmlspecialchars($fetchLeermiddelen['afdeling']); ?></h4>
+                        </td>
+                    </tr>
+                    <?php
+                }
+            }
             ?>
-                <tr class="success">
-                    <td>
-                        <h4><?php echo $fetchUsername['username']; ?></h4>
-                    </td>
-                    <td>
-                        <a href="https://<?php echo $fetchLeermiddelen['url'] ?>">
-                            <h4><?php echo $fetchLeermiddelen['title']; ?></h4>
-                        </a>
-                    </td>
-                    <td>
-                        <h4><?php echo $fetchLeermiddelen['afdeling']; ?></h4>
-                    </td>
-                </tr>
-                <tr></tr>
-            <?php } ?>
-            <tr>
-                <?php
-                if ($countLeermiddelen <= 0) { ?>
-                    <td>
-                        <h4 style="text-align:center">Jij hebt nog geen leermiddelen tot je beschikking!</h4>
-                    </td>
-                <?php } ?>
-            </tr>
-    </table>
-    </table>
-    </thead>
+        </tbody>
     </table>
 </div>
-
-
-
-<!-- oude code -->

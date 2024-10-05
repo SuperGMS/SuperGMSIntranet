@@ -1,7 +1,7 @@
 <?php
 include_once('class.database.php');
-$content = $db->real_escape_string($_GET['content']);
-$id = $db->real_escape_string($_GET['id']);
+$content = $db->quote($_GET['content']);
+$id = $db->quote($_GET['id']);
 
 if($content == 'open' || $content == 'onbekend' || $content == 'dicht' || $content == 'upnp open' || $content == 'upnp nat open' || $content == 'nat open'){
 

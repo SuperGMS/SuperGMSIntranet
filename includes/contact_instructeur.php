@@ -1,12 +1,12 @@
 <?php
 include_once("class.database.php");
 
-$afdeling = $db->real_escape_string($_POST['afdeling']);
-$uid = $db->real_escape_string($_POST['uid']);
-$naam = $db->real_escape_string($_POST['naam']);
-$email = $db->real_escape_string($_POST['email']);
-$onderwerp = $db->real_escape_string($_POST['onderwerp']);
-$message = $db->real_escape_string($_POST['message']);
+$afdeling = $db->quote($_POST['afdeling']);
+$uid = $db->quote($_POST['uid']);
+$naam = $db->quote($_POST['naam']);
+$email = $db->quote($_POST['email']);
+$onderwerp = $db->quote($_POST['onderwerp']);
+$message = $db->quote($_POST['message']);
 
 if(empty($afdeling)){
     ?><script>toastr.error("Je hebt geen afdeling ingevult!", "Oeps")</script><?php

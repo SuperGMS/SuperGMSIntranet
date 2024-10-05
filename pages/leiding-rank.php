@@ -2,7 +2,9 @@
 if ($leiding != 1) {
     echo 'Geen toegang';
 } else {
-    ?>
+
+?>
+
 
     <style>
         main .recent-orders table {
@@ -833,8 +835,6 @@ if ($leiding != 1) {
 
     <h1>Beheer machtiging</h1>
 
-    <?= $informatienognietafgemaakt ?>
-
     <div class="recent-orders">
         <table style="margin-right:1rem;">
             <thead>
@@ -846,7 +846,7 @@ if ($leiding != 1) {
             </thead>
             <thead>
                 <tr>
-                    <th style="width:10%"># </th>
+                    <th style="width:10%">#</th>
                     <th style="width:10%">Naam</th>
                     <th style="width:10%">Afdeling</th>
                     <th style="width:10%">Rol</th>
@@ -854,53 +854,50 @@ if ($leiding != 1) {
             </thead>
             <tbody>
                 <?php
-                $getLeden = $db->query("SELECT * FROM users ORDER BY username asc");
-                $countLeden = $getLeden->num_rows;
-
-                while ($fetchLeden = $getLeden->fetch_array()) {
-                    $getRol = $db->query("SELECT * FROM user_rank WHERE uid='" . $fetchLeden['id'] . "'");
-                    $fetchRol = $getRol->fetch_array();
+                $getLeden = $db->query("SELECT * FROM users ORDER BY username ASC");
+                while ($fetchLeden = $getLeden->fetch(PDO::FETCH_ASSOC)) {
+                    $stmtRol = $db->prepare("SELECT * FROM user_rank WHERE uid = :uid");
+                    $stmtRol->execute(['uid' => $fetchLeden['id']]);
+                    $fetchRol = $stmtRol->fetch(PDO::FETCH_ASSOC);
                 ?>
                     <tr>
                         <td style="width:10%" class="client-avatar">
-                            <?php echo $fetchLeden['id']; ?>
+                            <?= htmlspecialchars($fetchLeden['id']); ?>
                         </td>
                         <td style="width:10%">
-                            <?php echo $fetchLeden['username']; ?>
+                            <?= htmlspecialchars($fetchLeden['username']); ?>
                         </td>
                         <td style="width:10%">
-                            <?php echo $fetchLeden['eenheid']; ?>
+                            <?= htmlspecialchars($fetchLeden['eenheid']); ?>
                         </td>
                         <td style="width:10%" class="client-status">
                             <?php
-                            if ($fetchRol['rank_id'] == 1) { ?>
-                                <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpGZ1eLb.png" height="23px" />
-                                <div class="margin100px"></div>Lid
-                            <?php } else if ($fetchRol['rank_id'] == 7) { ?>
-                                <img src="https://archive.org/download/chesscom-analysis-icons/chesscom-labels/256x/great_find_256x.png" height="23px" />
-                                <div class="margin100px"></div>Bestuurslid
-                            <?php } else if ($fetchRol['rank_id'] == 15) { ?>
-                                <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpCWiDaX.png" height="23px" />
-                                <div class="margin100px"></div>Systeembeheerder
-                            <?php } else if ($fetchRol['rank_id'] == 16) { ?>
-                                <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phplIugqj.png" height="23px" />
-                                <div class="margin100px"></div>Vertrouwenspersoon
-                            <?php } else if ($fetchRol['rank_id'] == 26) { ?>
-                                <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpOnfDmd.png" height="23px" />
-                                <div class="margin100px"></div>Instructeur
-                            <?php } else if ($fetchRol['rank_id'] == 27) { ?>
-                                <img src="https://archive.org/download/chesscom-analysis-icons/chesscom-labels/1024x/best_1024x.png" height="23px" />
-                                <div class="margin100px"></div>Teamleider
-                            <?php } else { ?>
-                                <img src="https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpGZ1eLb.png" height="23px" />
-                                <div class="margin100px"></div>Lid
-                            <?php }
+                            $rankImages = [
+                                1 => 'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpGZ1eLb.png',
+                                7 => 'https://archive.org/download/chesscom-analysis-icons/chesscom-labels/256x/great_find_256x.png',
+                                15 => 'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpCWiDaX.png',
+                                16 => 'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phplIugqj.png',
+                                26 => 'https://images.chesscomfiles.com/uploads/v1/images_users/tiny_mce/PedroPinhata/phpOnfDmd.png',
+                                27 => 'https://archive.org/download/chesscom-analysis-icons/chesscom-labels/1024x/best_1024x.png'
+                            ];
+                            $rankNames = [
+                                1 => 'Lid',
+                                7 => 'Bestuurslid',
+                                15 => 'Systeembeheerder',
+                                16 => 'Vertrouwenspersoon',
+                                26 => 'Instructeur',
+                                27 => 'Teamleider'
+                            ];
+                            $rankId = $fetchRol['rank_id'] ?? 1; // Default to 'Lid'
                             ?>
+                            <img src="<?= $rankImages[$rankId] ?? $rankImages[1]; ?>" height="23px" />
+                            <div class="margin100px"></div><?= $rankNames[$rankId] ?? $rankNames[1]; ?>
                         </td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
+
         <div style="width:35%;float:right">
             <form id="postBeheerRank" method="POST">
                 <table style="width: 130%;float: right;position: relative;left: 5%;">
@@ -917,42 +914,36 @@ if ($leiding != 1) {
                                 <label class="label" style="color: white;">Gebruiker</label>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
                                 <select name="username" style="width:100%" class="selectnieuwe form-control-input">
                                     <?php
-                                    $getUsernames = $db->query("SELECT username, id FROM users WHERE id!='" . $userFetch['id'] . "' ORDER BY id");
-                                    while ($fetchUser = $getUsernames->fetch_array()) {
+                                    $stmtUsernames = $db->prepare("SELECT username, id FROM users WHERE id != :current_user ORDER BY id");
+                                    $stmtUsernames->execute(['current_user' => $userFetch['id']]);
+                                    while ($fetchUser = $stmtUsernames->fetch(PDO::FETCH_ASSOC)) {
                                     ?>
-                                        <option value="<?php echo $fetchUser['id']; ?>"><?php echo $fetchUser['username']; ?></option>
+                                        <option value="<?= htmlspecialchars($fetchUser['id']); ?>"><?= htmlspecialchars($fetchUser['username']); ?></option>
                                     <?php } ?>
                                 </select>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
                                 <label class="label" style="color: white;">Rol:</label>
                             </td>
                         </tr>
-                    </tbody>
-                    <tbody>
                         <tr>
                             <td>
                                 <select name="rank" style="width:100%" class="selectnieuwe form-control-input">
                                     <?php
                                     $getRanks = $db->query("SELECT * FROM ranks ORDER BY id");
-                                    while ($fetchRanks = $getRanks->fetch_array()) {
+                                    while ($fetchRanks = $getRanks->fetch(PDO::FETCH_ASSOC)) {
                                     ?>
-                                        <option value="<?php echo $fetchRanks['id']; ?>"><?php echo $fetchRanks['naam']; ?></option>
+                                        <option value="<?= htmlspecialchars($fetchRanks['id']); ?>"><?= htmlspecialchars($fetchRanks['naam']); ?></option>
                                     <?php } ?>
                                 </select>
                             </td>
                         </tr>
-                    <tbody>
                         <tr>
                             <td>
                                 <div class="control">
@@ -964,13 +955,13 @@ if ($leiding != 1) {
                 </table>
             </form>
         </div>
+
         <table style="margin-right:1rem;">
             <thead>
                 <tr>
                     <th style="width: 700%;">
-                        <h2>Route intergratie add-on</h2>
-                        <h4 style="text-align:center;display:inline-block">Lees <a href="https://github.com/Dishairano/SuperGMSRouteIntegration" style="color:#2d32d5;display:inline-block">hier</a> meer over deze add-on.
-                        </h4>
+                        <h2>Route integratie add-on</h2>
+                        <h4 style="text-align:center;display:inline-block">Lees <a href="https://github.com/Dishairano/SuperGMSRouteIntegration" style="color:#2d32d5;display:inline-block">hier</a> meer over deze add-on.</h4>
                     </th>
                 </tr>
             </thead>
@@ -980,17 +971,11 @@ if ($leiding != 1) {
                         <label class="label" style="color: white;">Gebruik deze add-on?</label>
                     </td>
                 </tr>
-            </tbody>
-            <tbody>
                 <tr>
                     <td>
                         <select name="UseRoute" style="width: 700%;" class="selectnieuwe">
-                            <option value="0" <?php if ($configuratieFetch['UseRoute'] == '0') {
-                                                    echo 'selected';
-                                                } ?>>Nee</option>
-                            <option value="1" <?php if ($configuratieFetch['UseRoute'] == '1') {
-                                                    echo 'selected';
-                                                } ?>>Ja</option>
+                            <option value="0" <?= $configuratieFetch['UseRoute'] == '0' ? 'selected' : ''; ?>>Nee</option>
+                            <option value="1" <?= $configuratieFetch['UseRoute'] == '1' ? 'selected' : ''; ?>>Ja</option>
                         </select>
                     </td>
                 </tr>

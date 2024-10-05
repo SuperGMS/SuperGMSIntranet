@@ -1,13 +1,27 @@
 <?php
-$getAanvraag = $db->query("SELECT * FROM vacatures WHERE id = '" . $db->real_escape_string($_GET['id']) . "'");
-$fetchAanvraag = $getAanvraag->fetch_array();
+// Ensure errors are reported but not displayed to users in production
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+// Redirect if the user is in conversation status
+if ($userFetch['opgesprek'] == '1') {
+    header("Location: opgesprek");
+    exit; // Ensure script stops after redirect
+}
+
+// Use prepared statements to prevent SQL injection
+$id = $_GET['id'] ?? 0; // Fallback to 0 if no ID is provided
+$getAanvraag = $db->prepare("SELECT * FROM vacatures WHERE id = ?");
+$getAanvraag->execute([$id]);
+$fetchAanvraag = $getAanvraag->fetch(PDO::FETCH_ASSOC);
+
+// Check if vacature was found
+if (!$fetchAanvraag) {
+    echo '<h4>Vacature niet gevonden!</h4>';
+    exit;
+}
+
 ?>
-<?php
-
-error_reporting(0); // Turn off all error reporting
-
-?>
-
 
 <style>
     main .recent-orders table {
@@ -823,186 +837,146 @@ error_reporting(0); // Turn off all error reporting
     }
 </style>
 
-<h1>Vacature: <?= $fetchAanvraag['titel']; ?></h1>
+<h1>Vacature: <?= htmlspecialchars($fetchAanvraag['titel']); ?></h1>
 
-<?= $informatienognietafgemaakt ?>
+<?= htmlspecialchars($informatienognietafgemaakt ?? '') ?>
 
 <div class="recent-orders">
     <table style="margin-right:1rem;">
         <thead>
             <tr>
-                <th>
-                    <h2>Algemene informatie</h2>
-                </th>
-            </tr>
-            <tr>
-                <th>
-                </th>
+                <th><h2>Algemene informatie</h2></th>
             </tr>
             <tr>
                 <th style="width:33.33%">Titel</th>
                 <th style="width:33.33%">Datum aangemaakt</th>
                 <th style="width:33.33%">Geopend of gesloten</th>
-
-            <tr>
-                <th colspan="5">
-                    <hr size="3" width="100%" style="margin-bottom:1rem;" color="red">
-                </th>
             </tr>
-
+            <tr>
+                <th colspan="3"><hr size="3" width="100%" style="margin-bottom:1rem;" color="red"></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td><?php echo $fetchAanvraag['titel']; ?></td>
-                <td><?php echo $fetchAanvraag['date']; ?></td>
-                <td><?php if ($fetchAanvraag['status'] == 1) {
-                    echo '<span class="label label-primary">Open</span></td>';
-                } else {
-                    echo '<span class="label label-danger">Gesloten</span></td>';
-                } ?></td>
+                <td><?= htmlspecialchars($fetchAanvraag['titel']); ?></td>
+                <td><?= htmlspecialchars($fetchAanvraag['date']); ?></td>
+                <td>
+                    <?= $fetchAanvraag['status'] == 1 ? '<span class="label label-primary">Open</span>' : '<span class="label label-danger">Gesloten</span>'; ?>
+                </td>
             </tr>
         </tbody>
     </table>
-    <div style="width:35%;float:right">
 
+    <div style="width:35%;float:right">
         <form id="AcceptTraining" method="POST">
             <table style="width: 130%;float: right;position: relative;left: 5%;">
                 <thead>
                     <tr>
-                        <th colspan="2">
-                            <h2>Reageren</h2>
-                            <?php
-                            if (isset($_POST['AcceptTraining'])) {
-                                $bericht = $db->real_escape_string($_POST['bericht']);
-                                if (empty($bericht)) {
-                                    echo '<h4 style="text-align:left">ERROR: Je hebt geen bericht ingevuld</h4>';
-                                } else {
-                                    $query = $db->query("INSERT INTO vacature_reactie (uid,vacature,reactie,date) VALUES (
-                    '" . $userFetch['id'] . "',
-                    '" . $fetchAanvraag['titel'] . "',
-                    '" . $bericht . "',
-                    NOW()
-                    )");
-
-                                    if ($query) {
-                                        echo '<h4>Reactie succesvol verzonden!</h4>';
-                                    } else {
-                                        echo '<h4>ERROR: Er ging iets mis!</h4>';
-                                    }
-                                }
-                            }
-                            ?>
-                        </th>
+                        <th colspan="2"><h2>Reageren</h2></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <label class="label" style="color: white;">Naam*</label>
-                        </td>
+                        <td><label class="label" style="color: white;">Naam*</label></td>
                     </tr>
-                </tbody>
-                <tbody>
                     <tr>
                         <td colspan="2">
-                            <div class="control">
-                                <input class="selectnieuwe" name="naam" type="text" value="<?= $userFetch['naam'] . ' ' . $userFetch['achternaam'] ?>" readonly="">
-                                <input class="selectnieuwe" name="naamid" type="text" value="<?= $userFetch['id'] ?>" style="display:none" readonly="">
-                            </div>
+                            <input class="selectnieuwe" name="naam" type="text" value="<?= htmlspecialchars($userFetch['naam'] . ' ' . $userFetch['achternaam']) ?>" readonly="">
+                            <input class="selectnieuwe" name="naamid" type="hidden" value="<?= htmlspecialchars($userFetch['id']) ?>" readonly="">
                         </td>
                     </tr>
-                </tbody>
-                <tbody>
+                    <tr>
+                        <td><label class="label" style="color: white;">Afdeling*</label></td>
+                    </tr>
                     <tr>
                         <td>
-                            <label class="label" style="color: white;">Afdeling*</label>
+                            <input class="selectnieuwe" type="text" name="afdeling" value="<?= htmlspecialchars($userFetch['eenheid']) ?>" readonly="">
                         </td>
                     </tr>
-                </tbody>
-                <tbody>
                     <tr>
-                        <td style="width:100%">
-                            <div class="control" colspan="1">
-                                <input class="selectnieuwe" type="text" name="afdeling" value="<?= $userFetch['eenheid'] ?>" readonly="">
-                            </div>
-                        </td>
+                        <td><label class="label" style="color: white;">Motivatie</label></td>
                     </tr>
-                </tbody>
-                <tbody>
-                    <tr>
-                        <td>
-                            <label class="label" style="color: white;">Motivatie</label>
-                        </td>
-                    </tr>
-                </tbody>
-                <tbody>
                     <tr>
                         <td colspan="2">
-                            <div class="control">
-                                <input class="selectnieuwe" name="bericht" type="text" placeholder="Opmerking">
-                            </div>
+                            <textarea class="selectnieuwe" name="bericht" placeholder="Opmerking"></textarea>
                         </td>
                     </tr>
-                </tbody>
-                <tbody>
                     <tr>
-                        <td>
-                            <div class="control">
-                                <input type="submit" name="AcceptTraining" class="button is-success is-focused nieuw" value="Reageren">
-                            </div>
-                        </td>
+                        <td><input type="submit" name="AcceptTraining" class="button is-success is-focused nieuw" value="Reageren"></td>
                     </tr>
                 </tbody>
             </table>
         </form>
+
+        <?php
+        // Form submission handling with validation and prepared statements
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['AcceptTraining'])) {
+            $bericht = trim($_POST['bericht'] ?? '');
+
+            if (empty($bericht)) {
+                echo '<h4 style="color:red;">ERROR: Je hebt geen bericht ingevuld</h4>';
+            } else {
+                // Use prepared statement to insert the response
+                $stmt = $db->prepare("INSERT INTO vacature_reactie (uid, vacature, reactie, date) VALUES (?, ?, ?, NOW())");
+                if ($stmt->execute([$userFetch['id'], $fetchAanvraag['titel'], $bericht])) {
+                    echo '<h4>Reactie succesvol verzonden!</h4>';
+                } else {
+                    echo '<h4>ERROR: Er ging iets mis!</h4>';
+                }
+            }
+        }
+        ?>
     </div>
+
     <table>
         <thead>
             <tr>
-                <th>
-                    <h2>Uitleg</h2>
-                </th>
+                <th><h2>Uitleg</h2></th>
             </tr>
+            <tr>
+                <td><?= nl2br(htmlspecialchars($fetchAanvraag['text'])); ?></td>
+            </tr>
+        </thead>
+    </table>
 
-            <td><?php echo $fetchAanvraag['text']; ?></td>
+    <table>
+        <thead>
+            <tr>
+                <th>Training</th>
+                <th>Datum</th>
+                <th>Eenheid</th>
+                <th>Status</th>
+            </tr>
         </thead>
         <tbody>
             <?php
-            $getIngepland = $db->query("SELECT * FROM formtraining WHERE stat = '2' and uid = '" . $userFetch['id'] . "' OR stat = '3' and uid = '" . $userFetch['id'] . "' ORDER BY id ASC");
-            while ($fetchIngepland = $getIngepland->fetch_array()) {
+            $getIngepland = $db->prepare("SELECT * FROM formtraining WHERE (stat = 2 OR stat = 3) AND uid = ? ORDER BY id ASC");
+            $getIngepland->execute([$userFetch['id']]);
+
+            while ($fetchIngepland = $getIngepland->fetch(PDO::FETCH_ASSOC)) {
                 ?>
-                    <tr>
-                        <td>
-                            <?php if ($fetchIngepland['training'] == "1") {
-                                echo "Inwerktraining";
-                            }
-                            if ($fetchIngepland['training'] == "2") {
-                                echo "Verdiepingstraining";
-                            }
-                            if ($fetchIngepland['training'] == "3") {
-                                echo "Specialisatietraining";
-                            }
-                            if ($fetchIngepland['training'] == "4") {
-                                echo "Vuurwapentraining";
-                            }
-                            if ($fetchIngepland['training'] == "5") {
-                                echo "Examen";
-                            }
-                            ?>
-                        </td>
-                        <td><?= $fetchIngepland['date'] ?></td>
-                        <td><?= $fetchIngepland['eenheid'] ?></td>
-                        <td>
-                            <?php if ($fetchIngepland['stat'] != "3") { ?>
-                                    <p class="labellabel-primary">Uitgevoerd</p>
-                            <?php } else {
-                                echo "Afgezegd";
-                            } ?>
-                        </td>
-                        <td>Verslag</td>
-                    </tr>
-            <?php } ?>
+                <tr>
+                    <td><?= htmlspecialchars(getTrainingName($fetchIngepland['training'])); ?></td>
+                    <td><?= htmlspecialchars($fetchIngepland['date']); ?></td>
+                    <td><?= htmlspecialchars($fetchIngepland['eenheid']); ?></td>
+                    <td><?= $fetchIngepland['stat'] == 3 ? 'Afgezegd' : '<span class="label label-primary">Uitgevoerd</span>'; ?></td>
+                </tr>
+                <?php
+            }
+
+            // Function to return training names
+            function getTrainingName($code)
+            {
+                switch ($code) {
+                    case "1": return "Inwerktraining";
+                    case "2": return "Verdiepingstraining";
+                    case "3": return "Specialisatietraining";
+                    case "4": return "Vuurwapentraining";
+                    case "5": return "Examen";
+                    default: return "Onbekend";
+                }
+            }
+            ?>
         </tbody>
     </table>
 </div>

@@ -1,20 +1,3 @@
-<?php
-if ($userFetch['opgesprek'] == '1') {
-    header("Location: opgesprek");
-}
-
-$getAfwezigheid = $db->query("SELECT * FROM afwezigheid WHERE uid = '" . $userFetch['id'] . "'");
-$countAfwezigheid = $getAfwezigheid->num_rows;
-
-$getAfwezigheidOngeoorloofd = $db->query("SELECT * FROM afwezigheid WHERE uid = '" . $userFetch['id'] . "' AND reden = '1' OR uid = '" . $userFetch['id'] . "' AND reden = '2'");
-$countAfwezigheidOngeoorloofd = $getAfwezigheidOngeoorloofd->num_rows;
-
-$getAfwezigheidGeoorloofd = $db->query("SELECT * FROM afwezigheid WHERE uid = '" . $userFetch['id'] . "' AND reden = '3' OR uid = '" . $userFetch['id'] . "' AND reden = '4'");
-$countAfwezigheidGeoorloofd = $getAfwezigheidGeoorloofd->num_rows;
-?>
-
-<!-- Hier nieuwe code onder -->
-
 <h1>Cijfers</h1>
 
 <div class="recent-orders">
@@ -33,32 +16,40 @@ $countAfwezigheidGeoorloofd = $getAfwezigheidGeoorloofd->num_rows;
                 </th>
             </tr>
             <?php
-            $getCijfers = $db->query("SELECT * FROM cijfers WHERE uid = '" . $userFetch['id'] . "'");
-            $countCijfer = $getCijfers->num_rows;
-            if ($countCijfer <= 0) {
-                echo '<tr><td></td><td>Geen cijfers gevonden!</td></tr>';
-            }
-            while ($fetchCijfers = $getCijfers->fetch_array()) {
-                $getUsername = $db->query("SELECT username, id FROM users WHERE id = '" . $fetchCijfers['by_uid'] . "'");
-                $fetchUsername = $getUsername->fetch_assoc();
-            ?>
-                <tr class="<?php if ($fetchCijfers['cijfer'] >= 5.5) {
-                                echo 'success';
-                            } else {
-                                echo 'danger';
-                            } ?>">
-                    <td><?php echo $fetchCijfers['id']; ?></td>
-                    <td><?php echo $fetchCijfers['title']; ?></td>
-                    <td><?php echo $fetchCijfers['punten']; ?></td>
-                    <td><?php echo $fetchCijfers['cijfer']; ?></td>
-                    <td><?php echo $fetchUsername['username']; ?></td>
-                </tr>
-            <?php } ?>
+            // Fetch cijfers for the current user
+            $getCijfers = $db->prepare("SELECT * FROM cijfers WHERE uid = :uid");
+            $getCijfers->execute(['uid' => $userFetch['id']]);
+            $cijfersData = $getCijfers->fetchAll(PDO::FETCH_ASSOC);
+            $countCijfer = count($cijfersData);
 
+            // If no cijfers found, display message
+            if ($countCijfer <= 0) {
+                echo '<tr><td colspan="5">Geen cijfers gevonden!</td></tr>';
+            } else {
+                foreach ($cijfersData as $fetchCijfers) {
+                    // Check if by_uid exists before querying users table
+                    if (isset($fetchCijfers['by_uid'])) {
+                        $getUsername = $db->prepare("SELECT username FROM users WHERE id = :by_uid");
+                        $getUsername->execute(['by_uid' => $fetchCijfers['by_uid']]);
+                        $fetchUsername = $getUsername->fetch(PDO::FETCH_ASSOC);
+                    } else {
+                        $fetchUsername = ['username' => 'Onbekend'];
+                    }
+
+                    // Ensure the necessary fields are present before accessing them
+                    $cijferClass = isset($fetchCijfers['cijfer']) && $fetchCijfers['cijfer'] >= 5.5 ? 'success' : 'danger';
+                    ?>
+                    <tr class="<?php echo $cijferClass; ?>">
+                        <td><?php echo isset($fetchCijfers['id']) ? $fetchCijfers['id'] : '-'; ?></td>
+                        <td><?php echo isset($fetchCijfers['title']) ? $fetchCijfers['title'] : 'N/A'; ?></td>
+                        <td><?php echo isset($fetchCijfers['punten']) ? $fetchCijfers['punten'] : 'N/A'; ?></td>
+                        <td><?php echo isset($fetchCijfers['cijfer']) ? $fetchCijfers['cijfer'] : 'N/A'; ?></td>
+                        <td><?php echo isset($fetchUsername['username']) ? $fetchUsername['username'] : 'Onbekend'; ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            ?>
         </thead>
     </table>
-
-
 </div>
-
-<!-- oud systeem -->

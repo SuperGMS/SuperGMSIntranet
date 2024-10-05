@@ -1,12 +1,12 @@
 <?php
 include_once("class.database.php");
 
-$leidinggevende = $db->real_escape_string($_POST['leidinggevende']);
-$uid = $db->real_escape_string($_POST['uid']);
-$naam = $db->real_escape_string($_POST['naam']);
-$email = $db->real_escape_string($_POST['email']);
-$onderwerp = $db->real_escape_string($_POST['onderwerp']);
-$message = $db->real_escape_string($_POST['message']);
+$leidinggevende = $db->quote($_POST['leidinggevende']);
+$uid = $db->quote($_POST['uid']);
+$naam = $db->quote($_POST['naam']);
+$email = $db->quote($_POST['email']);
+$onderwerp = $db->quote($_POST['onderwerp']);
+$message = $db->quote($_POST['message']);
 
 if(empty($leidinggevende)){
     ?><script>toastr.error("Je hebt geen leidinggevende gekozen!", "Oeps")</script><?php

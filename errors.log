@@ -1,0 +1,48 @@
+[07-Nov-2024 09:34:25 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user ''@'localhost' (using password: NO) in C:\xampp\htdocs\SuperGMSIntranet\class.database.php:60
+Stack trace:
+#0 C:\xampp\htdocs\SuperGMSIntranet\class.database.php(60): mysqli->__construct('', '', Object(SensitiveParameterValue), '')
+#1 C:\xampp\htdocs\SuperGMSIntranet\includes\class.ranks.php(2): include_once('C:\\xampp\\htdocs...')
+#2 C:\xampp\htdocs\SuperGMSIntranet\index.php(5): include_once('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\SuperGMSIntranet\class.database.php on line 60
+[07-Nov-2024 09:36:41 Europe/Berlin] Missing required database credentials
+[07-Nov-2024 09:41:51 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:42:52 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:42:55 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:44:24 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:44:26 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:45:53 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:48:29 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:48:32 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:48:53 Europe/Berlin] Database connection exception: Access denied for user 'admin_SuperGMSWHMCS'@'localhost' (using password: YES)
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:100
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:101
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:102
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:103
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:104
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:100
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:101
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:102
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:103
+[07-Nov-2024 09:50:41 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:104
+[07-Nov-2024 09:51:51 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:100
+[07-Nov-2024 09:51:51 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:101
+[07-Nov-2024 09:51:51 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:102
+[07-Nov-2024 09:51:51 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:103
+[07-Nov-2024 09:51:51 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:104
+[07-Nov-2024 09:51:51 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near ':email' at line 1 in C:\xampp\htdocs\SuperGMSIntranet\login.php:130
+Stack trace:
+#0 C:\xampp\htdocs\SuperGMSIntranet\login.php(130): mysqli->prepare('SELECT salt FRO...')
+#1 C:\xampp\htdocs\SuperGMSIntranet\index.php(9): include_once('C:\\xampp\\htdocs...')
+#2 {main}
+  thrown in C:\xampp\htdocs\SuperGMSIntranet\login.php on line 130
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:100
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:101
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:102
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:103
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:104
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:100
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:101
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:102
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:103
+[07-Nov-2024 09:51:58 Europe/Berlin] Error: [2] ini_set(): Session ini settings cannot be changed when a session is active - C:\xampp\htdocs\SuperGMSIntranet\includes\class.database.php:104

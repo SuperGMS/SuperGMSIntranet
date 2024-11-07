@@ -11,7 +11,7 @@ if ($mysqli->connect_error) {
 	echo "Error:(" . $mysqli->connect_errno . "): " . $mysqli->connect_error;
 }
 
-include_once("includes/class.database.php");
+include_once("class.database.php"); // Updated to use relative path since we're in the includes directory
 
 $configuratieQuery = $db->query("SELECT * FROM Configuratie");
 $configuratieFetch = $configuratieQuery->fetch_assoc();
@@ -40,4 +40,3 @@ if ($result->num_rows == 0) {
 	  }
 	}
   }
-  

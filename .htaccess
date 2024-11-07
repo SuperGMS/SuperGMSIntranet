@@ -6,6 +6,10 @@ RewriteEngine On
     Header always set Access-Control-Allow-Headers "Content-Type"
     Header set Access-Control-Allow-Credentials true
 
+    # Added security headers
+    Header set X-XSS-Protection "1; mode=block"
+    Header set X-Content-Type-Options nosniff
+    Header always append X-Frame-Options SAMEORIGIN
 </IfModule>
 
 RewriteRule ^settings/(.+?)/?$ /index.php?p=settings&id=$1 [L]
@@ -62,7 +66,6 @@ RewriteRule ^vertrouwenspersoon/lid/(.*)$ index.php?p=vertrouwenspersoon-beheerl
 RewriteRule ^vertrouwenspersoon/problemen index.php?p=vertrouwenspersoon-problemen [L]
 RewriteRule ^vertrouwenspersoon/aanpassen/probleem/(.*)$ index.php?p=vertrouwenspersoon-editprobleem&id=$1 [L]
 
-
 RewriteRule ^leiding/leden index.php?p=leiding-leden [L]
 RewriteRule ^leiding/lid/(.*)$ index.php?p=leiding-beheerlid&id=$1 [L]
 RewriteRule ^leiding/toevoegen/lid index.php?p=leiding-addlid [L]
@@ -100,4 +103,3 @@ RewriteRule ^/?$ index.php?p=home [L,QSA]
 
 RewriteCond %{REQUEST_URI} !/(api|css|forms|images|includes|js|libs|login|pages|scripts|index\.php) [NC]
 RewriteRule ^(.+)$ index.php?p=$1 [L,QSA]
-

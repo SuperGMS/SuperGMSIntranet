@@ -1,7 +1,7 @@
 <?php
 if ($instructeur != 1) {
     echo 'Geen toegang!';
-    exit; // Added exit to stop further script execution
+    exit;
 }
 ?>
 
@@ -16,10 +16,10 @@ if ($instructeur != 1) {
 <?php
 if ($userFetch['opgesprek'] == '1') {
     header("Location: opgesprek");
-    exit; // Added exit to stop further script execution
+    exit;
 }
 
-// Define a helper function to get training type
+// Trainingtype ophalen
 function getTrainingType($training) {
     $types = [
         "1" => "Inwerktraining",
@@ -31,14 +31,16 @@ function getTrainingType($training) {
     return isset($types[$training]) ? $types[$training] : "Onbekend";
 }
 
-// Define a helper function to fetch user info
+// Gebruikersinfo ophalen
 function getUserInfo($db, $userId) {
     $stmt = $db->prepare("SELECT username, eenheid FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
 }
 
-// Define an array of statuses and titles
+// Statussen en titels
 $statuses = [
     '0' => 'Openstaande aanvragen',
     '1' => 'Ingeplande aanvragen',
@@ -49,7 +51,9 @@ $statuses = [
 
 foreach ($statuses as $status => $title) {
     $stmt = $db->prepare("SELECT * FROM formtraining WHERE stat = ? AND eenheid = ? ORDER BY date");
-    $stmt->execute([$status, $userFetch['eenheid']]);
+    $stmt->bind_param("is", $status, $userFetch['eenheid']);
+    $stmt->execute();
+    $result = $stmt->get_result();
 ?>
     <div class="recent-orders">
         <h2><?php echo $title; ?></h2>
@@ -65,25 +69,22 @@ foreach ($statuses as $status => $title) {
                 </tr>
             </thead>
             <tbody>
-                <?php
-                while ($fetchAanvraag = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                <?php while ($fetchAanvraag = $result->fetch_assoc()) {
                     $fetchUsername = getUserInfo($db, $fetchAanvraag['uid']);
                 ?>
-                    <tr class="clickable-row" data-href="<?php echo $site; ?>/instructeur/aanvraag-beheer/<?php echo $fetchAanvraag['id'] ?>">
+                    <tr class="clickable-row" data-href="<?php echo $site; ?>/instructeur/aanvraag-beheer/<?php echo $fetchAanvraag['id']; ?>">
                         <td><?php echo $fetchAanvraag['id']; ?></td>
-                        <td><?php echo $fetchUsername['username']; ?></td>
-                        <td><?php echo getTrainingType($fetchAanvraag['training']); ?></td>
-                        <td><?php echo $fetchAanvraag['chosendate']; ?></td>
-                        <td><?php echo $fetchUsername['eenheid']; ?></td>
-                        <td><?php echo $fetchAanvraag['date']; ?></td>
+                        <td><?php echo htmlspecialchars($fetchUsername['username']); ?></td>
+                        <td><?php echo htmlspecialchars(getTrainingType($fetchAanvraag['training'])); ?></td>
+                        <td><?php echo htmlspecialchars($fetchAanvraag['chosendate']); ?></td>
+                        <td><?php echo htmlspecialchars($fetchUsername['eenheid']); ?></td>
+                        <td><?php echo htmlspecialchars($fetchAanvraag['date']); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     </div>
-
     <hr size="4" width="100%" style="margin-bottom:1rem;margin-top:1.3rem;" color="red">
-
 <?php
 }
 ?>

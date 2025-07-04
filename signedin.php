@@ -80,7 +80,7 @@ window.onclick = function(event) {
             <div class="toggle">
                 <div class="logo">
                     <img src="<?= $configuratieFetch['serverLogo']; ?>">
-                    <h2>Mijn <span class="danger">District</span></h2>
+                    <h2>Civita<span class="danger">Core</span></h2>
                 </div>
                 <div class="close" id="close-btn">
                     <span class="material-icons-sharp">
@@ -253,11 +253,11 @@ window.onclick = function(event) {
 
                 <?php
                 $getMail = $db->query("SELECT * FROM mailbox WHERE uid_to = '" . $userFetch['id'] . "' AND gelezen = '0' ORDER BY date DESC LIMIT 3");
-                $countMails = $getMail->rowCount();
+                $countMails = $getMail->num_rows;
                 if ($countMails == 0) {
                     echo '&nbsp; Geen nieuwe notificaties!';
                 }
-                while ($fetchMail = $getMail->fetch(PDO::FETCH_ASSOC)) {
+                while ($fetchMail = $getMail->fetch_array()) {
                     $getUserinfo = $db->query("SELECT id, username, avatar FROM users WHERE id = '" . $fetchMail['uid_from'] . "'");
                     $getUser = $getUserinfo->fetchAll();
                 ?>

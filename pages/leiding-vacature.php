@@ -855,24 +855,44 @@ if ($leiding != 1) {
             </thead>
             <tbody>
                 <?php
-                $stmt = $db->query("SELECT * FROM vacature_reactie ORDER BY date");
-                while ($fetch = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $usernameStmt = $db->prepare("SELECT username FROM users WHERE id = :uid");
-                    $usernameStmt->execute(['uid' => $fetch['uid']]);
-                    $fetchU = $usernameStmt->fetch(PDO::FETCH_ASSOC);
+// Verbind met database
+// $db is je mysqli connection object
 
-                    $id = htmlspecialchars($fetch['id']);
-                    $username = htmlspecialchars($fetchU['username'] ?? 'Onbekend');
-                    $vacature = htmlspecialchars($fetch['vacature']);
-                    $date = htmlspecialchars($fetch['date']);
-                ?>
-                    <tr class="clickable-row" data-href="<?= htmlspecialchars($site . '/leiding/bekijk/vacature/' . $id) ?>">
-                        <td><?= $id ?></td>
-                        <td><?= $username ?></td>
-                        <td><?= $vacature ?></td>
-                        <td><?= $date ?></td>
-                    </tr>
-                <?php } ?>
+// Query met JOIN om gebruikersnaam in één keer op te halen
+$sql = "
+    SELECT 
+        vacature_reactie.id,
+        vacature_reactie.vacature,
+        vacature_reactie.date,
+        users.username
+    FROM 
+        vacature_reactie
+    LEFT JOIN users ON users.id = vacature_reactie.uid
+    ORDER BY vacature_reactie.date
+";
+
+$result = $db->query($sql);
+
+if ($result) {
+    while ($fetch = $result->fetch_assoc()) {
+        $id = htmlspecialchars($fetch['id']);
+        $username = htmlspecialchars($fetch['username'] ?? 'Onbekend');
+        $vacature = htmlspecialchars($fetch['vacature']);
+        $date = htmlspecialchars($fetch['date']);
+        ?>
+        <tr class="clickable-row" data-href="<?= htmlspecialchars($site . '/leiding/bekijk/vacature/' . $id) ?>">
+            <td><?= $id ?></td>
+            <td><?= $username ?></td>
+            <td><?= $vacature ?></td>
+            <td><?= $date ?></td>
+        </tr>
+        <?php
+    }
+    $result->free();
+} else {
+    echo "<tr><td colspan='4'>Er is een fout opgetreden bij het ophalen van de reacties.</td></tr>";
+}
+?>
             </tbody>
         </table>
         <div style="width:35%;float:right">
@@ -944,14 +964,29 @@ if ($leiding != 1) {
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $stmt = $db->query("SELECT * FROM vacatures ORDER BY date");
-                while ($fetch = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $id = htmlspecialchars($fetch['id']);
-                    $titel = htmlspecialchars($fetch['titel']);
-                    $date = htmlspecialchars($fetch['date']);
-                    $status = $fetch['status'] == "1" ? "Open" : "Gesloten";
-                ?>
+<?php
+// Zorg ervoor dat je een geldige mysqli-verbinding hebt in $db
+
+// Query uitvoeren
+$result = $db->query("SELECT * FROM vacatures ORDER BY date");
+
+if ($result) {
+    while ($fetch = $result->fetch_assoc()) {
+        $id = htmlspecialchars($fetch['id']);
+        $titel = htmlspecialchars($fetch['titel']);
+        $date = htmlspecialchars($fetch['date']);
+        $status = $fetch['status'] == "1" ? "Open" : "Gesloten";
+        ?>
+        <tr class="clickable-row" data-href="<?= htmlspecialchars($site . '/leiding/bekijk/vacature/' . $id) ?>">
+            <td><?= $id ?></td>
+            <td><?= $titel ?></td>
+            <td><?= $date ?></td>
+            <td><?= $status ?></td>
+        </tr>
+        <?php
+    
+?>
+
                     <tr>
                         <td style="width:5%"><?= $id ?></td>
                         <td style="width:30%"><?= $titel ?></td>
@@ -966,7 +1001,11 @@ if ($leiding != 1) {
                             </form>
                         </td>
                     </tr>
-                <?php } ?>
+                <?php }
+    $result->free();
+} else {
+    echo "<tr><td colspan='4'>Er is een fout opgetreden bij het ophalen van vacatures.</td></tr>";
+} ?>
             </tbody>
         </table>
     </div>

@@ -30,32 +30,31 @@ $informatienognietafgemaakt = isset($informatienognietafgemaakt) ? $informatieno
             </tr>
         </thead>
         <tbody>
-            <?php
-            // Secure the query by using prepared statements
-            $getAanvraag = $db->query("SELECT * FROM vacatures ORDER BY date DESC");
-            $vacatures = $getAanvraag->fetchAll(PDO::FETCH_ASSOC);
+<?php
+// Check of er vacatures zijn
+$getAanvraag = $db->query("SELECT * FROM vacatures ORDER BY date DESC");
 
-            if (count($vacatures) > 0) {
-                foreach ($vacatures as $fetchAanvraag) {
-                    ?>
-                    <tr onclick="window.location.href='<?php echo $site; ?>/vacature-lezen?id=<?php echo $fetchAanvraag['id']; ?>'">
-                        <td><?php echo htmlspecialchars($fetchAanvraag['titel']); ?></td>
-                        <td><?php echo htmlspecialchars(substr($fetchAanvraag['text'], 0, 25)) . '..'; ?></td>
-                        <td><?php echo htmlspecialchars($fetchAanvraag['date']); ?></td>
-                        <td>
-                            <?php if ($fetchAanvraag['status'] == 1) {
-                                echo '<span class="label label-primary">Open</span>';
-                            } else {
-                                echo '<span class="label label-danger">Gesloten</span>';
-                            } ?>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            } else {
-                echo '<tr><td colspan="4" style="text-align:center">Geen vacatures gevonden!</td></tr>';
-            }
-            ?>
+if ($getAanvraag && $getAanvraag->num_rows > 0) {
+    while ($fetchAanvraag = $getAanvraag->fetch_assoc()) {
+        ?>
+        <tr onclick="window.location.href='<?php echo $site; ?>/vacature-lezen?id=<?php echo $fetchAanvraag['id']; ?>'">
+            <td><?php echo htmlspecialchars($fetchAanvraag['titel']); ?></td>
+            <td><?php echo htmlspecialchars(substr($fetchAanvraag['text'], 0, 25)) . '..'; ?></td>
+            <td><?php echo htmlspecialchars($fetchAanvraag['date']); ?></td>
+            <td>
+                <?php if ($fetchAanvraag['status'] == 1) {
+                    echo '<span class="label label-primary">Open</span>';
+                } else {
+                    echo '<span class="label label-danger">Gesloten</span>';
+                } ?>
+            </td>
+        </tr>
+        <?php
+    }
+} else {
+    echo '<tr><td colspan="4" style="text-align:center">Geen vacatures gevonden!</td></tr>';
+}
+?>
         </tbody>
     </table>
 </div>

@@ -16,11 +16,13 @@
                 </th>
             </tr>
             <?php
-            // Fetch cijfers for the current user
-            $getCijfers = $db->prepare("SELECT * FROM cijfers WHERE uid = :uid");
-            $getCijfers->execute(['uid' => $userFetch['id']]);
-            $cijfersData = $getCijfers->fetchAll(PDO::FETCH_ASSOC);
+            $getCijfers = $db->prepare("SELECT * FROM cijfers WHERE uid = ?");
+            $getCijfers->bind_param("i", $userFetch['id']); // "i" = integer
+            $getCijfers->execute();
+            $result = $getCijfers->get_result();
+            $cijfersData = $result->fetch_all(MYSQLI_ASSOC);
             $countCijfer = count($cijfersData);
+
 
             // If no cijfers found, display message
             if ($countCijfer <= 0) {
@@ -28,17 +30,18 @@
             } else {
                 foreach ($cijfersData as $fetchCijfers) {
                     // Check if by_uid exists before querying users table
-                    if (isset($fetchCijfers['by_uid'])) {
-                        $getUsername = $db->prepare("SELECT username FROM users WHERE id = :by_uid");
-                        $getUsername->execute(['by_uid' => $fetchCijfers['by_uid']]);
-                        $fetchUsername = $getUsername->fetch(PDO::FETCH_ASSOC);
-                    } else {
-                        $fetchUsername = ['username' => 'Onbekend'];
-                    }
+if (isset($fetchCijfers['by_uid'])) {
+        $getUsername = $db->prepare("SELECT username FROM users WHERE id = ?");
+        $getUsername->bind_param("i", $fetchCijfers['by_uid']);
+        $getUsername->execute();
+        $usernameResult = $getUsername->get_result();
+        $fetchUsername = $usernameResult->fetch_assoc();
+    } else {
+        $fetchUsername = ['username' => 'Onbekend'];
+    }
 
-                    // Ensure the necessary fields are present before accessing them
-                    $cijferClass = isset($fetchCijfers['cijfer']) && $fetchCijfers['cijfer'] >= 5.5 ? 'success' : 'danger';
-                    ?>
+    $cijferClass = isset($fetchCijfers['cijfer']) && $fetchCijfers['cijfer'] >= 5.5 ? 'success' : 'danger';
+            ?>
                     <tr class="<?php echo $cijferClass; ?>">
                         <td><?php echo isset($fetchCijfers['id']) ? $fetchCijfers['id'] : '-'; ?></td>
                         <td><?php echo isset($fetchCijfers['title']) ? $fetchCijfers['title'] : 'N/A'; ?></td>
@@ -46,7 +49,7 @@
                         <td><?php echo isset($fetchCijfers['cijfer']) ? $fetchCijfers['cijfer'] : 'N/A'; ?></td>
                         <td><?php echo isset($fetchUsername['username']) ? $fetchUsername['username'] : 'Onbekend'; ?></td>
                     </tr>
-                    <?php
+            <?php
                 }
             }
             ?>

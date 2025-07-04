@@ -190,16 +190,16 @@ if ($userFetch['opgesprek'] == '1') {
 <?php  } ?>
 
 <div class="new-users">
-    <h2>Nieuwste leden</h2>
-    <div class="user-list">
-        <?php
-        $getNieuweLeden = $db->query("SELECT * FROM `users` WHERE `opgesprek` = '0' ORDER BY id DESC LIMIT 4");
-        while ($nieuwLid = $getNieuweLeden->fetch(PDO::FETCH_ASSOC)) { ?>
-            <div class="user">
-                <img src="<?php echo isset($nieuwLid['avatar']) ? $nieuwLid['avatar'] : ''; ?>">
-                <h2><?php echo isset($nieuwLid['naam']) ? $nieuwLid['naam'] : ''; ?> <?php echo isset($nieuwLid['achternaam']) ? substr($nieuwLid['achternaam'], 0, 1) : ''; ?>.</h2>
-                <p><?php echo isset($nieuwLid['eenheid']) ? $nieuwLid['eenheid'] : ''; ?></p>
-            </div>
-        <?php } ?>
-    </div>
+	<h2>Nieuwste leden</h2>
+	<div class="user-list">
+		<?php
+		$getNieuweLeden = $db->query("SELECT * FROM `users` WHERE `opgesprek` = '0' ORDER BY id DESC LIMIT 4");
+		while ($nieuwLid = $getNieuweLeden->fetch_array()) { ?>
+			<div class="user">
+				<img src="<?php echo isset($nieuwLid['avatar']) ? $nieuwLid['avatar'] : ''; ?>">
+				<h2><?php echo isset($nieuwLid['naam']) ? $nieuwLid['naam'] : ''; ?> <?php echo isset($nieuwLid['achternaam']) ? substr($nieuwLid['achternaam'], 0, 1) : ''; ?>.</h2>
+				<p><?php echo isset($nieuwLid['eenheid']) ? $nieuwLid['eenheid'] : ''; ?></p>
+			</div>
+		<?php } ?>
+	</div>
 </div>

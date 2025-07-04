@@ -1,10 +1,11 @@
 <?php
-// Check if the user has access (assuming you handle sessions securely elsewhere)
-if ($leiding !== 1) {
+// Check toegang
+if ($leiding !== "1") {
     echo 'Geen toegang!';
+    exit; // script stoppen bij geen toegang
 }
 
-// Define an array of queries to execute with named placeholders to avoid repetition
+// Array met queries
 $queries = [
     'aantalLeden' => "SELECT COUNT(*) FROM users",
     'aantalOpgesprek' => "SELECT COUNT(*) FROM users WHERE opgesprek = 1",
@@ -16,19 +17,29 @@ $queries = [
     'aantalNietPorto' => "SELECT COUNT(*) FROM users WHERE porto = 0"
 ];
 
-// Initialize an array to store the results
+// Resultaten array
 $results = [];
 
-// Execute each query securely with prepared statements
 foreach ($queries as $key => $sql) {
-    $stmt = $db->prepare($sql);
-    $stmt->execute();
-    $results[$key] = $stmt->fetchColumn(); // Fetches the count directly
+    $result = $db->query($sql);
+    if ($result) {
+        $row = $result->fetch_row(); // numerieke array
+        $results[$key] = $row[0];    // count ophalen
+        $result->free();
+    } else {
+        $results[$key] = 0; // fallback
+    }
 }
 
-// Fetch all members for the table display
+// Alle leden ophalen
 $getLeden = $db->query("SELECT * FROM users ORDER BY eenheid");
-$leden = $getLeden->fetchAll(PDO::FETCH_ASSOC);
+$leden = [];
+if ($getLeden) {
+    while ($row = $getLeden->fetch_assoc()) {
+        $leden[] = $row;
+    }
+    $getLeden->free();
+}
 ?>
 
 <!-- New section -->

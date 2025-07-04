@@ -2,7 +2,7 @@
 if ($userFetch['opgesprek'] == '1') {
     header("Location: opgesprek");
     exit; // Make sure to exit after redirecting
-} 
+}
 ?>
 
 <!-- Hier nieuwe code onder -->
@@ -24,24 +24,28 @@ if ($userFetch['opgesprek'] == '1') {
         </thead>
         <tbody>
             <?php
-            // Fetch learning materials
-            $getLeermiddelen = $db->prepare("SELECT * FROM downloads WHERE afdeling = :afdeling OR afdeling = 'Elke afdeling'");
-            $getLeermiddelen->execute(['afdeling' => $userFetch['eenheid']]);
-            $leermiddelenData = $getLeermiddelen->fetchAll(PDO::FETCH_ASSOC);
+            // Gebruik prepared statement met ? in plaats van :afdeling
+            $getLeermiddelen = $db->prepare("SELECT * FROM downloads WHERE afdeling = ? OR afdeling = 'Elke afdeling'");
+            $getLeermiddelen->bind_param("s", $userFetch['eenheid']);
+            $getLeermiddelen->execute();
+            $result = $getLeermiddelen->get_result();
+            $leermiddelenData = $result->fetch_all(MYSQLI_ASSOC);
             $countLeermiddelen = count($leermiddelenData);
 
             if ($countLeermiddelen <= 0) {
                 echo '<tr><td colspan="3" style="text-align:center"><h4>Jij hebt nog geen leermiddelen tot je beschikking!</h4></td></tr>';
             } else {
                 foreach ($leermiddelenData as $fetchLeermiddelen) {
-                    // Fetch the username for each learning material
-                    $getUsername = $db->prepare("SELECT username FROM users WHERE id = :made_uid");
-                    $getUsername->execute(['made_uid' => $fetchLeermiddelen['made_uid']]);
-                    $fetchUsername = $getUsername->fetch(PDO::FETCH_ASSOC);
-                    ?>
+                    // Haal de gebruikersnaam op met een tweede prepared statement
+                    $getUsername = $db->prepare("SELECT username FROM users WHERE id = ?");
+                    $getUsername->bind_param("i", $fetchLeermiddelen['made_uid']);
+                    $getUsername->execute();
+                    $usernameResult = $getUsername->get_result();
+                    $fetchUsername = $usernameResult->fetch_assoc();
+            ?>
                     <tr class="success">
                         <td>
-                            <h4><?php echo htmlspecialchars($fetchUsername['username']); ?></h4>
+                            <h4><?php echo htmlspecialchars($fetchUsername['username'] ?? 'Onbekend'); ?></h4>
                         </td>
                         <td>
                             <a href="https://<?php echo htmlspecialchars($fetchLeermiddelen['url']); ?>" target="_blank">
@@ -52,7 +56,7 @@ if ($userFetch['opgesprek'] == '1') {
                             <h4><?php echo htmlspecialchars($fetchLeermiddelen['afdeling']); ?></h4>
                         </td>
                     </tr>
-                    <?php
+            <?php
                 }
             }
             ?>

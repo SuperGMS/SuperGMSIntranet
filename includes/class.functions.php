@@ -2,40 +2,40 @@
 include_once("class.database.php");
 if(isset($_SESSION['email'])){
     $emailQuery = $db->query("SELECT * FROM mailbox WHERE trash = '0' AND gelezen = '0' AND uid_to = '".$userFetch['id']."'");
-    $emailCount = $emailQuery->rowCount();
+    $emailCount = $emailQuery->num_rows;
 
     $emailQuery2 = $db->query("SELECT * FROM mailbox WHERE trash = '0' AND important = '1' AND uid_to = '".$userFetch['id']."'");
-    $emailCount2 = $emailQuery2->rowCount();
+    $emailCount2 = $emailQuery2->num_rows;
     
     $emailQuery3 = $db->query("SELECT * FROM mailbox WHERE trash = '0' AND uid_from = '".$userFetch['id']."'");
-    $emailCount3 = $emailQuery3->rowCount();
+    $emailCount3 = $emailQuery3->num_rows;
     
     $emailQuery4 = $db->query("SELECT * FROM mailbox WHERE trash = '1' AND uid_to = '".$userFetch['id']."'");
-    $emailCount4 = $emailQuery4->rowCount();
+    $emailCount4 = $emailQuery4->num_rows;
     
     $trainingQuery = $db->query("SELECT * FROM vacatures WHERE status = '1'");
-    $trainingCount = $trainingQuery->rowCount();
+    $trainingCount = $trainingQuery->num_rows;
     
     $TrainingOpenstaand = $db->query("SELECT * FROM formtraining WHERE eenheid = '".$userFetch['eenheid']."' AND STAT = '0'");
-    $TrainingOpenstaandCount = $TrainingOpenstaand->rowCount();
+    $TrainingOpenstaandCount = $TrainingOpenstaand->num_rows;
 
     $cijferQuery = $db->query("SELECT * FROM cijfers WHERE uid = '".$userFetch['id']."'");
-    $cijferCount = $cijferQuery->rowCount();
+    $cijferCount = $cijferQuery->num_rows;
 
     $UitgedeeldCijfers = $db->query("SELECT * FROM cijfers WHERE by_uid='". $userFetch['id'] ."'");
-    $UitgedeeldCijfersCount = $UitgedeeldCijfers->rowCount();
+    $UitgedeeldCijfersCount = $UitgedeeldCijfers->num_rows;
 
     $ContactLedenInstructeur = $db->query("SELECT * FROM contact_in WHERE afdeling  = '".$userFetch['eenheid']."' AND status = '1'");
-    $ContactLedenInstructeurCount = $ContactLedenInstructeur->rowCount();
+    $ContactLedenInstructeurCount = $ContactLedenInstructeur->num_rows;
 
     $ContactLedenLeiding = $db->query("SELECT * FROM contact_leiding WHERE leidinggevende = '".$userFetch['username']."' AND status = '1'");
-    $ContactLedenLeidingCount = $ContactLedenLeiding->rowCount();
+    $ContactLedenLeidingCount = $ContactLedenLeiding->num_rows;
     
     $OpenstaandeAanmeldingen = $db->query("SELECT * FROM aanmeldingen WHERE accepted = '0'");
-    $OpenstaandeAanmeldingenCount = $OpenstaandeAanmeldingen->rowCount();
+    $OpenstaandeAanmeldingenCount = $OpenstaandeAanmeldingen->num_rows;
 
     $vacature_reactie = $db->query("SELECT * FROM vacature_reactie");
-    $vacature_reactieCount = $vacature_reactie->rowCount();
+    $vacature_reactieCount = $vacature_reactie->num_rows;
 
     function categorie_mail($cat){
         if($cat == 1){

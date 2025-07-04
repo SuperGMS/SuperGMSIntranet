@@ -815,25 +815,26 @@
 <h1>Aanvragen</h1>
 
 <?php
-// Ensure errors are reported but not displayed to users in production
+// Toon fouten tijdens ontwikkeling (zet uit in productie)
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 
-// Prevent SQL Injection and sanitize user input
-$userId = $userFetch['id'];
+// Ingeplande trainingen ophalen (stat 0 of 1)
+$stmtPlanned = $db->prepare("SELECT * FROM formtraining WHERE (stat = '0' OR stat = '1') AND uid = ? ORDER BY id ASC");
+$stmtPlanned->bind_param("i", $userId);
+$stmtPlanned->execute();
+$resultPlanned = $stmtPlanned->get_result();
+$plannedTrainings = $resultPlanned->fetch_all(MYSQLI_ASSOC);
 
-// Prepare and execute queries securely
-$getIngeplandPlanned = $db->prepare("SELECT * FROM formtraining WHERE (stat = '0' OR stat = '1') AND uid = ? ORDER BY id ASC");
-$getIngeplandPlanned->execute([$userId]);
-$plannedTrainings = $getIngeplandPlanned->fetchAll(PDO::FETCH_ASSOC);
+// Afgeronde trainingen ophalen (stat 2, 3 of 4)
+$stmtCompleted = $db->prepare("SELECT * FROM formtraining WHERE (stat = '2' OR stat = '3' OR stat = '4') AND uid = ? ORDER BY id ASC");
+$stmtCompleted->bind_param("i", $userId);
+$stmtCompleted->execute();
+$resultCompleted = $stmtCompleted->get_result();
+$completedTrainings = $resultCompleted->fetch_all(MYSQLI_ASSOC);
 
-$getIngeplandCompleted = $db->prepare("SELECT * FROM formtraining WHERE (stat = '2' OR stat = '3' OR stat = '4') AND uid = ? ORDER BY id ASC");
-$getIngeplandCompleted->execute([$userId]);
-$completedTrainings = $getIngeplandCompleted->fetchAll(PDO::FETCH_ASSOC);
-
-// Function to get training type names
-function getTrainingName($code)
-{
+// Functie voor trainingsnaam
+function getTrainingName($code) {
     $names = [
         "1" => "Inwerktraining",
         "2" => "Verdiepingstraining",
@@ -841,12 +842,11 @@ function getTrainingName($code)
         "4" => "Vuurwapentraining",
         "5" => "Examen"
     ];
-    return $names[$code] ?? "Onbekend";
+    return isset($names[$code]) ? $names[$code] : "Onbekend";
 }
 
-// Function to get status names
-function getStatusName($code)
-{
+// Functie voor statusnaam
+function getStatusName($code) {
     $statuses = [
         "0" => "Onbehandeld",
         "1" => "Ingepland",
@@ -854,11 +854,9 @@ function getStatusName($code)
         "3" => "Afgezegd",
         "4" => "Geweigerd"
     ];
-    return $statuses[$code] ?? "Onbekend";
+    return isset($statuses[$code]) ? $statuses[$code] : "Onbekend";
 }
 ?>
-
-<?= htmlspecialchars($informatienognietafgemaakt ?? '') ?>
 
 <div class="recent-orders">
     <table style="margin-right:1rem;">

@@ -6,11 +6,14 @@ if ($leiding != 1) {
 }
 
 if (isset($_GET['id'])) {
+    $id = (int) $_GET['id']; // altijd casten naar int om SQL injectie te voorkomen
 
     // Prepare and execute the statement to get user info
-    $stmt = $db->prepare("SELECT * FROM users WHERE id = :id");
-    $stmt->execute(['id' => $_GET['id']]);
-    $fetchLid = $stmt->fetch();
+    $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $fetchLid = $result->fetch_assoc();
 
     if (!$fetchLid) {
         echo 'Lid niet gevonden.';
@@ -18,21 +21,28 @@ if (isset($_GET['id'])) {
     }
 
     // Get absence info
-    $stmtAfwezigheid = $db->prepare("SELECT * FROM afwezigheid WHERE uid = :uid");
-    $stmtAfwezigheid->execute(['uid' => $fetchLid['id']]);
-    $countAfwezigheid = $stmtAfwezigheid->rowCount();
+    $stmtAfwezigheid = $db->prepare("SELECT * FROM afwezigheid WHERE uid = ?");
+    $stmtAfwezigheid->bind_param("i", $fetchLid['id']);
+    $stmtAfwezigheid->execute();
+    $resultAfwezigheid = $stmtAfwezigheid->get_result();
+    $countAfwezigheid = $resultAfwezigheid->num_rows;
 
     // Get ongeoorloofd absence info
-    $stmtAfwezigheidOngeoorloofd = $db->prepare("SELECT * FROM afwezigheid WHERE uid = :uid AND (reden = '1' OR reden = '2')");
-    $stmtAfwezigheidOngeoorloofd->execute(['uid' => $fetchLid['id']]);
-    $countAfwezigheidOngeoorloofd = $stmtAfwezigheidOngeoorloofd->rowCount();
+    $stmtAfwezigheidOngeoorloofd = $db->prepare("SELECT * FROM afwezigheid WHERE uid = ? AND (reden = '1' OR reden = '2')");
+    $stmtAfwezigheidOngeoorloofd->bind_param("i", $fetchLid['id']);
+    $stmtAfwezigheidOngeoorloofd->execute();
+    $resultAfwezigheidOngeoorloofd = $stmtAfwezigheidOngeoorloofd->get_result();
+    $countAfwezigheidOngeoorloofd = $resultAfwezigheidOngeoorloofd->num_rows;
 
     // Get geoorloofd absence info
-    $stmtAfwezigheidGeoorloofd = $db->prepare("SELECT * FROM afwezigheid WHERE uid = :uid AND (reden = '3' OR reden = '4')");
-    $stmtAfwezigheidGeoorloofd->execute(['uid' => $fetchLid['id']]);
-    $countAfwezigheidGeoorloofd = $stmtAfwezigheidGeoorloofd->rowCount();
+    $stmtAfwezigheidGeoorloofd = $db->prepare("SELECT * FROM afwezigheid WHERE uid = ? AND (reden = '3' OR reden = '4')");
+    $stmtAfwezigheidGeoorloofd->bind_param("i", $fetchLid['id']);
+    $stmtAfwezigheidGeoorloofd->execute();
+    $resultAfwezigheidGeoorloofd = $stmtAfwezigheidGeoorloofd->get_result();
+    $countAfwezigheidGeoorloofd = $resultAfwezigheidGeoorloofd->num_rows;
 
 ?>
+
 
 
     <style>
@@ -247,20 +257,35 @@ if (isset($_GET['id'])) {
                             <th>Reden</th>
                             <th>Datum</th>
                         </tr>
-                        <?php
-                        while ($fetchAfwezigheid = $stmtAfwezigheid->fetch()) {
-                            // Fetch the username of the person who marked the absence
-                            $stmtUsername = $db->prepare("SELECT username FROM users WHERE id = :id");
-                            $stmtUsername->execute(['id' => $fetchAfwezigheid['made_uid']]);
-                            $fetchUsername = $stmtUsername->fetch();
-                        ?>
-                            <tr>
-                                <td><?= $fetchAfwezigheid['id']; ?></td>
-                                <td><?= htmlspecialchars($fetchUsername['username']); ?></td>
-                                <td><?= ($fetchAfwezigheid['reden'] == '1') ? 'Te laat' : (($fetchAfwezigheid['reden'] == '2') ? 'Absent' : 'Geoorloofd absent'); ?></td>
-                                <td><?= $fetchAfwezigheid['date']; ?></td>
-                            </tr>
-                        <?php } ?>
+<?php
+while ($fetchAfwezigheid = $resultAfwezigheid->fetch_assoc()) {
+    // Prepare the query to fetch the username
+    $stmtUsername = $db->prepare("SELECT username FROM users WHERE id = ?");
+    $stmtUsername->bind_param("i", $fetchAfwezigheid['made_uid']);
+    $stmtUsername->execute();
+    $resultUsername = $stmtUsername->get_result();
+    $fetchUsername = $resultUsername->fetch_assoc();
+?>
+    <tr>
+        <td><?= $fetchAfwezigheid['id']; ?></td>
+        <td><?= htmlspecialchars($fetchUsername['username']); ?></td>
+        <td>
+            <?php
+                if ($fetchAfwezigheid['reden'] == '1') {
+                    echo 'Te laat';
+                } elseif ($fetchAfwezigheid['reden'] == '2') {
+                    echo 'Absent';
+                } else {
+                    echo 'Geoorloofd absent';
+                }
+            ?>
+        </td>
+        <td><?= $fetchAfwezigheid['date']; ?></td>
+    </tr>
+<?php
+}
+?>
+
                     </table>
                 </div>
             </div>

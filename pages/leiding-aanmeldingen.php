@@ -28,14 +28,16 @@ if ($leiding != 1) {
                 <th></th>
             </tr>
             <?php
-            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = :accepted ORDER BY date DESC");
             $accepted = 0;
-            $stmt->bindParam(':accepted', $accepted, PDO::PARAM_INT);
-            $stmt->execute();
-            $aanmeldingenN = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (count($aanmeldingenN) > 0) {
-                foreach ($aanmeldingenN as $aanmeldingNe) {
+            // Prepared statement in mysqli
+            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = ? ORDER BY date DESC");
+            $stmt->bind_param("i", $accepted);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($aanmeldingNe = $result->fetch_assoc()) {
             ?>
                     <tr onclick="window.location='<?= $site; ?>/leiding/aanmelding/<?= htmlspecialchars($aanmeldingNe['id']); ?>'" class="hovering">
                         <td><?= htmlspecialchars($aanmeldingNe['id']); ?></td>
@@ -47,13 +49,18 @@ if ($leiding != 1) {
                         <td><?= htmlspecialchars($aanmeldingNe['afdeling']); ?></td>
                         <td><?= htmlspecialchars($aanmeldingNe['date']); ?></td>
                     </tr>
-            <?php
+                <?php
                 }
+                $result->free();
             } else {
-            ?>
+                ?>
                 <h6 style="text-align:center">Geen nieuwe aanmeldingen!!</h6>
                 <br />
-            <?php } ?>
+            <?php
+            }
+            $stmt->close();
+            ?>
+
         </table>
     </div>
 
@@ -82,13 +89,15 @@ if ($leiding != 1) {
             </tr>
             <?php
             $accepted = 1;
-            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = :accepted ORDER BY date DESC");
-            $stmt->bindParam(':accepted', $accepted, PDO::PARAM_INT);
-            $stmt->execute();
-            $aanmeldingenG = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (count($aanmeldingenG) > 0) {
-                foreach ($aanmeldingenG as $aanmeldingGe) {
+            // Prepared statement met mysqli
+            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = ? ORDER BY date DESC");
+            $stmt->bind_param("i", $accepted);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($aanmeldingGe = $result->fetch_assoc()) {
             ?>
                     <tr onclick="window.location='<?= $site; ?>/leiding/aanmelding/<?= htmlspecialchars($aanmeldingGe['id']); ?>'" class="hovering">
                         <td><?= htmlspecialchars($aanmeldingGe['id']); ?></td>
@@ -100,13 +109,18 @@ if ($leiding != 1) {
                         <td><?= htmlspecialchars($aanmeldingGe['afdeling']); ?></td>
                         <td><?= htmlspecialchars($aanmeldingGe['date']); ?></td>
                     </tr>
-            <?php
+                <?php
                 }
+                $result->free();
             } else {
-            ?>
+                ?>
                 <h6 style="text-align:center">Geen geaccepteerde aanmeldingen!!</h6>
                 <br />
-            <?php } ?>
+            <?php
+            }
+            $stmt->close();
+            ?>
+
         </table>
     </div>
 
@@ -135,13 +149,15 @@ if ($leiding != 1) {
             </tr>
             <?php
             $accepted = 2;
-            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = :accepted ORDER BY date DESC");
-            $stmt->bindParam(':accepted', $accepted, PDO::PARAM_INT);
-            $stmt->execute();
-            $aanmeldingGew2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (count($aanmeldingGew2) > 0) {
-                foreach ($aanmeldingGew2 as $aanmeldingGew) {
+            // Prepared statement met mysqli
+            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = ? ORDER BY date DESC");
+            $stmt->bind_param("i", $accepted);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($aanmeldingGew = $result->fetch_assoc()) {
             ?>
                     <tr onclick="window.location='<?= $site; ?>/leiding/aanmelding/<?= htmlspecialchars($aanmeldingGew['id']); ?>'" class="hovering">
                         <td><?= htmlspecialchars($aanmeldingGew['id']); ?></td>
@@ -153,13 +169,18 @@ if ($leiding != 1) {
                         <td><?= htmlspecialchars($aanmeldingGew['afdeling']); ?></td>
                         <td><?= htmlspecialchars($aanmeldingGew['date']); ?></td>
                     </tr>
-            <?php
+                <?php
                 }
+                $result->free();
             } else {
-            ?>
+                ?>
                 <h6 style="text-align:center">Geen geweigerde aanmeldingen!</h6>
                 <br />
-            <?php } ?>
+            <?php
+            }
+            $stmt->close();
+            ?>
+
         </table>
     </div>
 
@@ -188,31 +209,37 @@ if ($leiding != 1) {
             </tr>
             <?php
             $accepted = 3;
-            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = :accepted ORDER BY date DESC");
-            $stmt->bindParam(':accepted', $accepted, PDO::PARAM_INT);
-            $stmt->execute();
-            $aanmeldingGew2 = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (count($aanmeldingGew2) > 0) {
-                foreach ($aanmeldingGew2 as $aanmeldingGew) {
+            $stmt = $db->prepare("SELECT * FROM aanmeldingen WHERE accepted = ? ORDER BY date DESC");
+            $stmt->bind_param("i", $accepted);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                while ($aanmelding = $result->fetch_assoc()) {
             ?>
-                    <tr onclick="window.location='<?= $site; ?>/leiding/aanmelding/<?= htmlspecialchars($aanmeldingGew['id']); ?>'" class="hovering">
-                        <td><?= htmlspecialchars($aanmeldingGew['id']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['naam']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['achternaam']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['leeftijd']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['email']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['telefoon']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['afdeling']); ?></td>
-                        <td><?= htmlspecialchars($aanmeldingGew['date']); ?></td>
+                    <tr onclick="window.location='<?= $site; ?>/leiding/aanmelding/<?= htmlspecialchars($aanmelding['id']); ?>'" class="hovering">
+                        <td><?= htmlspecialchars($aanmelding['id']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['naam']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['achternaam']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['leeftijd']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['email']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['telefoon']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['afdeling']); ?></td>
+                        <td><?= htmlspecialchars($aanmelding['date']); ?></td>
                     </tr>
-            <?php
+                <?php
                 }
+                $result->free();
             } else {
-            ?>
+                ?>
                 <h6 style="text-align:center">Geen behandelde aanmeldingen!</h6>
                 <br />
-            <?php } ?>
+            <?php
+            }
+            $stmt->close();
+            ?>
+
         </table>
     </div>
 <?php } ?>

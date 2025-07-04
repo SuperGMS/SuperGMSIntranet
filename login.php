@@ -9,18 +9,18 @@ include_once "./includes/class.database.php";
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--===============================================================================================-->
-	<link rel="shortcut icon" href="./logo.png" />
+	<link rel="shortcut icon" href="<?= $site ?>/logo.png" />
 	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="./login/vendor/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/vendor/bootstrap/css/bootstrap.min.css">
 	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="./login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="./login/vendor/animate/animate.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/vendor/animate/animate.css">
 	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="./login/vendor/select2/select2.min.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/vendor/select2/select2.min.css">
 	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="./login/css/util.css">
-	<link rel="stylesheet" type="text/css" href="./login/css/main.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/css/util.css">
+	<link rel="stylesheet" type="text/css" href="<?= $site ?>/login/css/main.css">
 	<!--===============================================================================================-->
 
 </head>
@@ -120,53 +120,63 @@ include_once "./includes/class.database.php";
 					<span class="m1-txt2" style="color:white">My Intranet</span> | Inloggen</br>
 
 
-					<?php
-					if ($_SERVER['REQUEST_METHOD'] == "POST") {
-						$email = $_POST['email'];
-						$password = $_POST['password'];
+<?php
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-						// Prepare the SQL query
-						$query = "SELECT salt FROM users WHERE email = :email";
-						$stmt = $db->prepare($query);
-						$stmt->bindParam(':email', $email);
+    // Eerste query: salt ophalen
+    $query = "SELECT salt FROM users WHERE email = ?";
+    $stmt = $db->prepare($query);
+    if (!$stmt) {
+        echo "Fout bij voorbereiden query: " . $db->error;
+        exit;
+    }
+    $stmt->bind_param("s", $email);
+    if (!$stmt->execute()) {
+        echo "Fout bij uitvoeren query: " . $stmt->error;
+        exit;
+    }
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
 
-						// Execute the query
-						if ($stmt->execute()) {
-							$user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        $salt = $user['salt'];
+        $hashedPassword = crypt($password, $salt);
 
-							if ($user) {
-								// Prepare the SQL query
-								$salt = $user['salt'];
-								$query = "SELECT id FROM users WHERE email = :email AND password = :password";
-								$stmt = $db->prepare($query);
-								$stmt->bindParam(':email', $email);
-								$stmt->bindParam(':password', crypt($password, $salt));
+        // Tweede query: controleren of email + wachtwoord kloppen
+        $query2 = "SELECT id FROM users WHERE email = ? AND password = ?";
+        $stmt2 = $db->prepare($query2);
+        if (!$stmt2) {
+            echo "Fout bij voorbereiden query: " . $db->error;
+            exit;
+        }
+        $stmt2->bind_param("ss", $email, $hashedPassword);
+        if (!$stmt2->execute()) {
+            echo "Fout bij uitvoeren query: " . $stmt2->error;
+            exit;
+        }
+        $result2 = $stmt2->get_result();
+        $row = $result2->fetch_assoc();
+        $stmt2->close();
 
-								// Execute the query
-								if ($stmt->execute()) {
-									$result = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $_SESSION['email'] = $email;
+?>
+            <script>
+                window.location = '<?php echo $site; ?>/home';
+            </script>
+<?php
+        } else {
+            echo "Je email of wachtwoord klopt niet.";
+        }
+    } else {
+        echo "Gebruiker niet gevonden.";
+    }
+}
+?>
 
-									if ($result) {
-										$_SESSION['email'] = $email;
-					?>
-										<script>
-											window.location = '<?php echo $site; ?>/home';
-										</script>
-					<?php
-									} else {
-										echo "Je email of wachtwoord klopt niet.";
-									}
-								} else {
-									echo "Er is iets misgegaan. Foutmelding: " . $stmt->errorInfo()[2];
-								}
-							} else {
-								echo "Er is iets misgegaan. Foutmelding: Gebruiker niet gevonden.";
-							}
-						} else {
-							echo "Er is iets misgegaan. Foutmelding: " . $stmt->errorInfo()[2];
-						}
-					}
-					?>
 
 				<form role="form" action="" method="POST" class="contact100-form validate-form">
 
